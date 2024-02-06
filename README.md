@@ -29,7 +29,9 @@ If you want to develop with this project, you can follow the steps below.
     go run cmd/main.go -c dev
     ```
 
-**NOTE**: You can click `Use this template` to create a new repository based on this project. and add Secrets Keys: `DOCKER_USERNAME` and `DOCKER_PASSWORD` in the repository settings. And when you push the code, it will automatically build binary and docker image and push to the Docker Hub.
+### CI/CD
+
+You can click `Use this template` to create a new repository based on this project. and add Secrets Keys: `DOCKER_USERNAME` and `DOCKER_PASSWORD` in the repository settings. And when you push the code, it will automatically build binary and docker image and push to the Docker Hub.
 
 ## Build
 
