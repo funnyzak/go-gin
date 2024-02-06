@@ -18,34 +18,21 @@ func AuthHanlder() gin.HandlerFunc {
 
 		if err != nil {
 			log.ZLog.Log.Error().Msgf("Error getting token: %v", err)
-			c.JSON(http.StatusUnauthorized, &model.ErrorResponse{
-				Code:    http.StatusUnauthorized,
-				Message: "Unauthorized",
-			})
-			c.Abort()
+			APIUtils.ResponseError(c, http.StatusUnauthorized, "Unauthorized")
 			return
 		}
-
 		claims := &model.Claims{}
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 			return []byte(config.Instance.JWT.Secret), nil
 		})
 		if err != nil {
 			log.ZLog.Log.Error().Msgf("Error parsing token: %v", err)
-			c.JSON(http.StatusUnauthorized, &model.ErrorResponse{
-				Code:    http.StatusUnauthorized,
-				Message: "Unauthorized",
-			})
-			c.Abort()
+			APIUtils.ResponseError(c, http.StatusUnauthorized, "Unauthorized")
 			return
 		}
 		if !token.Valid {
 			log.ZLog.Log.Error().Msgf("Invalid token")
-			c.JSON(http.StatusUnauthorized, &model.ErrorResponse{
-				Code:    http.StatusUnauthorized,
-				Message: "Invalid token",
-			})
-			c.Abort()
+			APIUtils.ResponseError(c, http.StatusUnauthorized, "Invalid token")
 			return
 		}
 
