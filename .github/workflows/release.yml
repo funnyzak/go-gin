@@ -1,0 +1,83 @@
+name: Release
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Publish a specific version, enter a git tag.'
+        required: true
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.ref_type == 'tag'
+    outputs:
+      TAG_NAME: ${{ steps.set_tag_name.outputs.TAG_NAME }}
+      REPO_NAME: ${{ steps.set_tag_name.outputs.REPO_NAME }}
+    steps:
+      - name: Set tag name
+        id: set_tag_name
+        run: |
+          {
+            if [ -n "${{ github.event.inputs.tag }}" ]; then
+              echo "TAG_NAME=${{ github.event.inputs.tag }}"
+            else
+              echo "TAG_NAME=${{ github.ref_name}}"
+            fi
+            echo "REPO_NAME=$(echo ${{ github.repository }} | awk -F '/' '{print $2}')"
+          } >> $GITHUB_OUTPUT
+
+  build:
+    name: Build
+    needs: [setup]
+    uses: ./.github/workflows/build.yml
+    with:
+      tag: ${{ needs.setup.outputs.TAG_NAME }}
+
+  publish-docker-image:
+    name: Publish Docker Image
+    needs: [setup]
+    uses: ./.github/workflows/docker_build.yml
+    with:
+      tags: ${{ needs.setup.outputs.TAG_NAME }},latest
+    secrets: inherit
+
+  release:
+    name: Release
+    needs: [setup, build, publish-docker-image]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Display structure of downloaded files
+        run: |
+          ls -R
+
+      - name: Zip artifacts
+        run: |
+          for dir in copilot-*; do
+            if [ -d "$dir" ]; then
+              echo "----- Zip $dir -----"
+              (cd $dir && zip -r9 "../${dir}-${{ needs.setup.outputs.TAG_NAME }}.zip" ./*)
+            fi
+          done
+
+          sha256sum copilot-*.zip > ${{ needs.setup.outputs.REPO_NAME }}-${{ needs.setup.outputs.TAG_NAME }}-sha256sum.txt
+
+          echo "----- Display release files -----"
+          ls -R | grep -E 'zip|sha256sum'
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            copilot-*.zip
+            ${{ needs.setup.outputs.REPO_NAME }}-${{ needs.setup.outputs.TAG_NAME }}-sha256sum.txt
+          draft: true
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

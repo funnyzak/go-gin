@@ -1,0 +1,43 @@
+{{ define "404" }}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Page Not Found</title>
+  <style>
+    body {
+      background-color: #fafafa;
+      font-family: Arial, sans-serif;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 100px auto;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 60px;
+      line-height: normal;
+    }
+
+    p {
+      color: #666;
+    }
+
+    a {
+      color: #5e009c;
+    }
+   </style>
+</head>
+<body>
+    <div class="container">
+      <h1>404</h1>
+      <p>Sorry, the page you are looking for could not be found.</p>
+      <a href="/">Go Home</a>
+    </div>
+</body>
+</html>
+{{ end }}

@@ -1,0 +1,99 @@
+name: Build
+
+on:
+  push:
+    paths-ignore:
+      - 'README*'
+      - 'LICENSE'
+      - '.editorconfig'
+      - '.github/**'
+      - '.gitignore'
+      - 'makefile'
+      - 'config.yaml.example'
+      - 'script/**'
+  pull_request:
+    paths-ignore:
+      - 'README*'
+      - 'LICENSE'
+      - '.editorconfig'
+      - '.github/**'
+      - '.gitignore'
+      - 'makefile'
+      - 'config.yaml.example'
+      - 'script/**'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "build a binary with the specified git tag, enter a git tag."
+        required: false
+        type: string
+        default: ''
+  workflow_call:
+    inputs:
+      tag:
+        description: "Build a binary with the specified git tag, enter a git tag."
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      VERSION_NAME: ${{ steps.set_version.outputs.VERSION_NAME }}
+      REPO_NAME: ${{ steps.set_version.outputs.REPO_NAME }}
+    steps:
+      - name: Set version
+        id: set_version
+        run: |
+          {
+            if [ -n "${{ github.event.inputs.tag }}" ]; then
+              echo "VERSION_NAME=${{ github.event.inputs.tag }}"
+            elif [ -n "${{ inputs.tag }}" ]; then
+              echo "VERSION_NAME=${{ inputs.tag }}"
+            else
+              echo "VERSION_NAME="
+            fi
+            echo "REPO_NAME=$(echo ${{ github.repository }} | awk -F '/' '{print $2}')"
+          } >> $GITHUB_OUTPUT
+
+  build:
+    strategy:
+      matrix:
+        goos: [windows, linux, darwin]
+        goarch: [amd64, arm64]
+        include:
+          - goos: linux
+            goarch: arm
+      fail-fast: false
+
+    runs-on: ubuntu-latest
+    needs: [setup]
+    env:
+      GOOS: ${{ matrix.goos }}
+      GOARCH: ${{ matrix.goarch }}
+      CGO_ENABLED: 0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.setup.outputs.VERSION_NAME }}
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+          cache-dependency-path: go.sum
+
+      - name: Build
+        run: |
+          go build -o build/${{ needs.setup.outputs.REPO_NAME }}${{ matrix.goos == 'windows' && '.exe' || ''}} cmd/main.go
+          ls -la build
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ needs.setup.outputs.REPO_NAME }}-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: build/*
