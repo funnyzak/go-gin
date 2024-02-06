@@ -8,9 +8,9 @@ import (
 	"go-gin/cmd/webserver/controller"
 	"go-gin/cmd/webserver/middleware"
 	"go-gin/internal/config"
-	"go-gin/internal/log"
 	"go-gin/internal/tmpl"
 	"go-gin/resource"
+	"go-gin/service/singleton"
 
 	"github.com/gin-gonic/gin"
 )
@@ -33,7 +33,7 @@ func NewRoute(config *config.Config) *gin.Engine {
 func serveStatic(r *gin.Engine) {
 	staticFs, err := fs.Sub(resource.StaticFS, "static")
 	if err != nil {
-		log.ZLog.Fatal().Err(err).Msg("Error parsing static files")
+		singleton.Log.Fatal().Err(err).Msg("Error parsing static files")
 		panic(err)
 	}
 	r.StaticFS("/static", http.FS(staticFs))
@@ -45,7 +45,7 @@ func loadTemplates(r *gin.Engine) {
 	var err error
 	new_tmpl, err = new_tmpl.ParseFS(resource.TemplateFS, "template/**/*.html", "template/*.html")
 	if err != nil {
-		log.ZLog.Fatal().Err(err).Msg("Error parsing templates")
+		singleton.Log.Fatal().Err(err).Msg("Error parsing templates")
 		panic(err)
 	}
 	r.SetHTMLTemplate(new_tmpl)
@@ -55,7 +55,7 @@ func routers(r *gin.Engine) {
 	// Logging middleware
 	r.Use(middleware.LoggingHandler())
 	// Rate limit middleware
-	r.Use(middleware.RateLimiterHandler(config.Instance.RateLimit.Max))
+	r.Use(middleware.RateLimiterHandler(singleton.Config.RateLimit.Max))
 
 	r.POST("/login", controller.Login)
 	userGroup := r.Group("/v1/user")

@@ -1,9 +1,8 @@
 package middleware
 
 import (
+	"go-gin/service/singleton"
 	"time"
-
-	"go-gin/internal/log"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,15 +11,15 @@ func LoggingHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		t := time.Now()
 
-		log.ZLog.Info().Msgf("Request Info:\nMethod: %s\nHost: %s\nURL: %s",
+		singleton.Log.Info().Msgf("Request Info:\nMethod: %s\nHost: %s\nURL: %s",
 			c.Request.Method, c.Request.Host, c.Request.URL)
-		log.ZLog.Debug().Msgf("Request Header:\n%v", c.Request.Header)
+		singleton.Log.Debug().Msgf("Request Header:\n%v", c.Request.Header)
 
 		c.Next()
 
 		latency := time.Since(t)
-		log.ZLog.Info().Msgf("Response Time: %s\nStatus: %d",
+		singleton.Log.Info().Msgf("Response Time: %s\nStatus: %d",
 			latency.String(), c.Writer.Status())
-		log.ZLog.Debug().Msgf("Response Header:\n%v", c.Writer.Header())
+		singleton.Log.Debug().Msgf("Response Header:\n%v", c.Writer.Header())
 	}
 }
