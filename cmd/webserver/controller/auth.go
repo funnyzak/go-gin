@@ -11,7 +11,7 @@ import (
 	"go-gin/internal/log"
 	"go-gin/model"
 
-	APIUtils "go-gin/internal/api"
+	api_utils "go-gin/internal/api"
 )
 
 // Login authenticates the user
@@ -22,7 +22,7 @@ func Login(c *gin.Context) {
 	if err != nil {
 		log.ZLog.Log.Error().Msgf("Error binding JSON: %v", err)
 
-		APIUtils.ResponseError(c, http.StatusBadRequest, "Invalid JSON")
+		api_utils.ResponseError(c, http.StatusBadRequest, "Invalid JSON")
 		return
 	}
 
@@ -31,7 +31,7 @@ func Login(c *gin.Context) {
 
 	if !ok || expectedPassword != creds.Password {
 		log.ZLog.Log.Error().Msgf("Invalid credentials: %v", creds)
-		APIUtils.ResponseError(c, http.StatusUnauthorized, "Invalid credentials")
+		api_utils.ResponseError(c, http.StatusUnauthorized, "Invalid credentials")
 		return
 	}
 
@@ -48,16 +48,16 @@ func Login(c *gin.Context) {
 	tokenString, err := token.SignedString([]byte(config.Instance.JWT.Secret))
 	if err != nil {
 		log.ZLog.Log.Error().Msgf("Error signing token: %v", err)
-		APIUtils.ResponseError(c, http.StatusInternalServerError, "Error signing token")
+		api_utils.ResponseError(c, http.StatusInternalServerError, "Error signing token")
 		return
 	}
 	c.SetCookie("token", tokenString, int(expirationTime.Unix()), "/", "", false, true)
-	APIUtils.Response(c, gin.H{"token": tokenString})
+	api_utils.Response(c, gin.H{"token": tokenString})
 }
 
 // Refresh refreshes the token
 func Refresh(c *gin.Context) {
-	tokenString, err := APIUtils.GetTokenString(c)
+	tokenString, err := api_utils.GetTokenString(c)
 
 	if err != nil {
 		log.ZLog.Log.Error().Msgf("Error getting token: %v", err)
@@ -74,7 +74,7 @@ func Refresh(c *gin.Context) {
 	})
 	if err != nil {
 		log.ZLog.Log.Error().Msgf("Error parsing token: %v", err)
-		APIUtils.ResponseError(c, http.StatusUnauthorized, "Unauthorized")
+		api_utils.ResponseError(c, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 	if !token.Valid {
@@ -92,14 +92,14 @@ func Refresh(c *gin.Context) {
 	tokenString, err = token.SignedString([]byte(config.Instance.JWT.Secret))
 	if err != nil {
 		log.ZLog.Log.Error().Msgf("Error signing token: %v", err)
-		APIUtils.ResponseError(c, http.StatusInternalServerError, "Error signing token")
+		api_utils.ResponseError(c, http.StatusInternalServerError, "Error signing token")
 		return
 	}
 	c.SetCookie("token", tokenString, int(expirationTime.Unix()), "/", "", false, true)
-	APIUtils.Response(c, gin.H{"token": tokenString})
+	api_utils.Response(c, gin.H{"token": tokenString})
 }
 
 func Logout(c *gin.Context) {
 	c.SetCookie("token", "", -1, "/", "", false, true)
-	APIUtils.Response(c, "", "Logged out")
+	api_utils.Response(c, "", "Logged out")
 }

@@ -9,7 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	APIUtils "go-gin/internal/api"
+	api_utils "go-gin/internal/api"
 )
 
 func GetCreation(c *gin.Context) {
@@ -17,7 +17,7 @@ func GetCreation(c *gin.Context) {
 	creation_file := fmt.Sprintf("%s/creation/%s.png", config.Instance.Upload.Dir, share_num)
 	// Check if the file exists
 	if _, err := os.Stat(creation_file); os.IsNotExist(err) {
-		APIUtils.ResponseError(c, http.StatusNotFound, "Creation not found")
+		api_utils.ResponseError(c, http.StatusNotFound, "Creation not found")
 		return
 	}
 

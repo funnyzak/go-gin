@@ -10,16 +10,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 
-	APIUtils "go-gin/internal/api"
+	api_utils "go-gin/internal/api"
 )
 
 func AuthHanlder() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		tokenString, err := APIUtils.GetTokenString(c)
+		tokenString, err := api_utils.GetTokenString(c)
 
 		if err != nil {
 			log.ZLog.Log.Error().Msgf("Error getting token: %v", err)
-			APIUtils.ResponseError(c, http.StatusUnauthorized, "Unauthorized")
+			api_utils.ResponseError(c, http.StatusUnauthorized, "Unauthorized")
 			return
 		}
 		claims := &model.Claims{}
@@ -28,12 +28,12 @@ func AuthHanlder() gin.HandlerFunc {
 		})
 		if err != nil {
 			log.ZLog.Log.Error().Msgf("Error parsing token: %v", err)
-			APIUtils.ResponseError(c, http.StatusUnauthorized, "Unauthorized")
+			api_utils.ResponseError(c, http.StatusUnauthorized, "Unauthorized")
 			return
 		}
 		if !token.Valid {
 			log.ZLog.Log.Error().Msgf("Invalid token")
-			APIUtils.ResponseError(c, http.StatusUnauthorized, "Invalid token")
+			api_utils.ResponseError(c, http.StatusUnauthorized, "Invalid token")
 			return
 		}
 
