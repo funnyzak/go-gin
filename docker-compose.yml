@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  go-gin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    container_name: go-gin
+    ports:
+      - 8080:8080
+    volumes:
+      - ./config.yaml:app/config.yaml
+      - ./upload:/app/upload
