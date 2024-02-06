@@ -1,4 +1,4 @@
-package webserver
+package srv
 
 import (
 	"fmt"

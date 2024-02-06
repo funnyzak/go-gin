@@ -1,12 +1,12 @@
-package webserver
+package srv
 
 import (
 	"html/template"
 	"io/fs"
 	"net/http"
 
-	"go-gin/cmd/webserver/controller"
-	"go-gin/cmd/webserver/middleware"
+	"go-gin/cmd/srv/controller"
+	"go-gin/cmd/srv/middleware"
 	"go-gin/internal/config"
 	"go-gin/internal/tmpl"
 	"go-gin/resource"
