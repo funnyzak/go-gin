@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/time/rate"
 
-	APIUtils "github.com/funnyzak/go-gin/internal/api"
+	APIUtils "go-gin/internal/api"
 )
 
 func RateLimiterHandler(reqsPerMin int) gin.HandlerFunc {

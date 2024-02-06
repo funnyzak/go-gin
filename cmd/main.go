@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/funnyzak/go-gin/cmd/webserver"
-	"github.com/funnyzak/go-gin/internal/config"
-	"github.com/funnyzak/go-gin/internal/log"
+	"go-gin/cmd/webserver"
+	"go-gin/internal/config"
+	"go-gin/internal/log"
+
 	flag "github.com/spf13/pflag"
 )
 

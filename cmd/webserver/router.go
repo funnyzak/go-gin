@@ -5,12 +5,13 @@ import (
 	"io/fs"
 	"net/http"
 
-	"github.com/funnyzak/go-gin/cmd/webserver/controller"
-	"github.com/funnyzak/go-gin/cmd/webserver/middleware"
-	"github.com/funnyzak/go-gin/internal/config"
-	"github.com/funnyzak/go-gin/internal/log"
-	"github.com/funnyzak/go-gin/internal/tmpl"
-	"github.com/funnyzak/go-gin/resource"
+	"go-gin/cmd/webserver/controller"
+	"go-gin/cmd/webserver/middleware"
+	"go-gin/internal/config"
+	"go-gin/internal/log"
+	"go-gin/internal/tmpl"
+	"go-gin/resource"
+
 	"github.com/gin-gonic/gin"
 )
 

@@ -5,10 +5,11 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/funnyzak/go-gin/internal/config"
+	"go-gin/internal/config"
+
 	"github.com/gin-gonic/gin"
 
-	APIUtils "github.com/funnyzak/go-gin/internal/api"
+	APIUtils "go-gin/internal/api"
 )
 
 func GetCreation(c *gin.Context) {

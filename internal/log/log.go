@@ -1,9 +1,9 @@
 package log
 
 import (
-	"github.com/funnyzak/go-gin/internal/config"
-	"github.com/funnyzak/go-gin/model"
-	"github.com/funnyzak/go-gin/pkg/logger"
+	"go-gin/internal/config"
+	"go-gin/model"
+	"go-gin/pkg/logger"
 )
 
 var ZLog *logger.Logger

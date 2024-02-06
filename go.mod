@@ -1,4 +1,4 @@
-module github.com/funnyzak/go-gin
+module go-gin
 
 go 1.21.6
 
