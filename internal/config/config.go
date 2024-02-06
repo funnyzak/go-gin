@@ -1,17 +1,12 @@
 package config
 
-import (
-	"fmt"
-
-	"github.com/funnyzak/gogin/pkg/config"
-)
-
 type Config struct {
 	Server struct {
 		Port    uint   `mapstructure:"port"`
 		BaseUrl string `mapstructure:"base_url"`
 	} `mapstructure:"server"`
-	Debug     bool `mapstructure:"debug"`
+	Debug     bool   `mapstructure:"debug"`
+	DB_Path   string `mapstructure:"db_path"`
 	RateLimit struct {
 		Max int `mapstructure:"max"`
 	} `mapstructure:"rate_limit"`
@@ -30,16 +25,4 @@ type Config struct {
 	Users map[string]string `mapstructure:"users"`
 }
 
-var Instance *Config
-
-func Init(name string) *Config {
-	_config, err := config.ReadConfig(name, "yaml", []string{".", "./config", "../"})
-	if err != nil {
-		panic(fmt.Errorf("unable to read config: %s", err))
-	}
-
-	if err := _config.Unmarshal(&Instance); err != nil {
-		panic(fmt.Errorf("unable to unmarshal config: %s", err))
-	}
-	return Instance
-}
+var Instance *Config = &Config{}

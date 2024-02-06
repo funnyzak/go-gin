@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/time/rate"
 
-	APIUtils "github.com/funnyzak/gogin/internal/api"
+	api_utils "go-gin/internal/api"
 )
 
 func RateLimiterHandler(reqsPerMin int) gin.HandlerFunc {
@@ -20,7 +20,7 @@ func RateLimiterHandler(reqsPerMin int) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		if !limiter.Allow() {
-			APIUtils.ResponseError(c, http.StatusTooManyRequests, "too many requests")
+			api_utils.ResponseError(c, http.StatusTooManyRequests, "too many requests")
 		}
 		c.Next()
 	}

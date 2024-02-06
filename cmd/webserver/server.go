@@ -3,8 +3,9 @@ package webserver
 import (
 	"fmt"
 
-	"github.com/funnyzak/gogin/internal/config"
-	"github.com/funnyzak/gogin/model"
+	"go-gin/internal/config"
+	"go-gin/model"
+
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 )

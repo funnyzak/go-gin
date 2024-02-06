@@ -71,7 +71,7 @@ docker run -d \
 
 ```bash
 # Pull source code
-git clone https://github.com/funnyzak/go-gin && cd go-gin
+git clone https://go-gin && cd go-gin
 # Compose startup, startup parameter configuration can be done by modifying the docker-compose.yml file
 docker compose up -d
 ```

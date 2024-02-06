@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/funnyzak/gogin/cmd/webserver"
-	"github.com/funnyzak/gogin/internal/config"
-	"github.com/funnyzak/gogin/internal/log"
+	"go-gin/cmd/webserver"
+	"go-gin/service/singleton"
+
 	flag "github.com/spf13/pflag"
 )
 
@@ -21,8 +21,14 @@ func main() {
 	flag.Parse()
 	flag.Lookup("config").NoOptDefVal = "config"
 
-	config.Init(webServerCliParam.ConfigName)
-	log.InitLog(config.Instance)
+	singleton.InitConfig(webServerCliParam.ConfigName)
+	singleton.InitLog(singleton.Config)
+	// singleton.InitDBFromPath(singleton.Config.DB_Path)
+	initService()
 
-	webserver.ServerWeb(config.Instance)
+	webserver.ServerWeb(singleton.Config)
+}
+
+func initService() {
+	singleton.InitSingleton()
 }

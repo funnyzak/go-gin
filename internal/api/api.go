@@ -3,7 +3,8 @@ package api
 import (
 	"fmt"
 
-	"github.com/funnyzak/gogin/model"
+	"go-gin/model"
+
 	"github.com/gin-gonic/gin"
 )
 
