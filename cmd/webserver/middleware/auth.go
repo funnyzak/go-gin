@@ -18,7 +18,7 @@ func AuthHanlder() gin.HandlerFunc {
 		tokenString, err := api_utils.GetTokenString(c)
 
 		if err != nil {
-			log.ZLog.Log.Error().Msgf("Error getting token: %v", err)
+			log.ZLog.Error().Msgf("Error getting token: %v", err)
 			api_utils.ResponseError(c, http.StatusUnauthorized, "Unauthorized")
 			return
 		}
@@ -27,12 +27,12 @@ func AuthHanlder() gin.HandlerFunc {
 			return []byte(config.Instance.JWT.Secret), nil
 		})
 		if err != nil {
-			log.ZLog.Log.Error().Msgf("Error parsing token: %v", err)
+			log.ZLog.Error().Msgf("Error parsing token: %v", err)
 			api_utils.ResponseError(c, http.StatusUnauthorized, "Unauthorized")
 			return
 		}
 		if !token.Valid {
-			log.ZLog.Log.Error().Msgf("Invalid token")
+			log.ZLog.Error().Msgf("Invalid token")
 			api_utils.ResponseError(c, http.StatusUnauthorized, "Invalid token")
 			return
 		}

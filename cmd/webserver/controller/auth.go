@@ -20,8 +20,7 @@ func Login(c *gin.Context) {
 	// get the body of the POST request
 	err := c.BindJSON(&creds)
 	if err != nil {
-		log.ZLog.Log.Error().Msgf("Error binding JSON: %v", err)
-
+		log.ZLog.Error().Msgf("Error binding JSON: %v", err)
 		api_utils.ResponseError(c, http.StatusBadRequest, "Invalid JSON")
 		return
 	}
@@ -30,7 +29,7 @@ func Login(c *gin.Context) {
 	expectedPassword, ok := users[creds.Username]
 
 	if !ok || expectedPassword != creds.Password {
-		log.ZLog.Log.Error().Msgf("Invalid credentials: %v", creds)
+		log.ZLog.Error().Msgf("Invalid credentials: %v", creds)
 		api_utils.ResponseError(c, http.StatusUnauthorized, "Invalid credentials")
 		return
 	}
@@ -47,7 +46,7 @@ func Login(c *gin.Context) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(config.Instance.JWT.Secret))
 	if err != nil {
-		log.ZLog.Log.Error().Msgf("Error signing token: %v", err)
+		log.ZLog.Error().Msgf("Error signing token: %v", err)
 		api_utils.ResponseError(c, http.StatusInternalServerError, "Error signing token")
 		return
 	}
@@ -60,7 +59,7 @@ func Refresh(c *gin.Context) {
 	tokenString, err := api_utils.GetTokenString(c)
 
 	if err != nil {
-		log.ZLog.Log.Error().Msgf("Error getting token: %v", err)
+		log.ZLog.Error().Msgf("Error getting token: %v", err)
 		c.JSON(http.StatusUnauthorized, &model.ErrorResponse{
 			Code:    http.StatusUnauthorized,
 			Message: "Unauthorized",
@@ -73,12 +72,12 @@ func Refresh(c *gin.Context) {
 		return []byte(config.Instance.JWT.Secret), nil
 	})
 	if err != nil {
-		log.ZLog.Log.Error().Msgf("Error parsing token: %v", err)
+		log.ZLog.Error().Msgf("Error parsing token: %v", err)
 		api_utils.ResponseError(c, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 	if !token.Valid {
-		log.ZLog.Log.Error().Msgf("Invalid token")
+		log.ZLog.Error().Msgf("Invalid token")
 		c.JSON(http.StatusUnauthorized, &model.ErrorResponse{
 			Code:    http.StatusUnauthorized,
 			Message: "Invalid token",
@@ -91,7 +90,7 @@ func Refresh(c *gin.Context) {
 	token = jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err = token.SignedString([]byte(config.Instance.JWT.Secret))
 	if err != nil {
-		log.ZLog.Log.Error().Msgf("Error signing token: %v", err)
+		log.ZLog.Error().Msgf("Error signing token: %v", err)
 		api_utils.ResponseError(c, http.StatusInternalServerError, "Error signing token")
 		return
 	}

@@ -7,11 +7,7 @@ import (
 	"os"
 )
 
-type Logger struct {
-	Log zerolog.Logger
-}
-
-func NewLogger(logLevel string, logPath string) *Logger {
+func NewLogger(logLevel string, logPath string) *zerolog.Logger {
 	if logPath == "" {
 		logPath = "logs/log.log"
 	}
@@ -28,25 +24,26 @@ func NewLogger(logLevel string, logPath string) *Logger {
 	zlog := zerolog.New(multi).With().Timestamp().Logger()
 
 	if logLevel == "" || logLevel == "none" || logLevel == "null" || logLevel == "nil" || logLevel == "off" {
-		return &Logger{Log: zerolog.New(zerolog.Nop())}
+		zlog.Level(zerolog.NoLevel)
+		return &zlog
 	}
 
 	switch logLevel {
 	case "debug":
-		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+		zlog = zlog.Level(zerolog.DebugLevel)
 	case "warn":
-		zerolog.SetGlobalLevel(zerolog.WarnLevel)
+		zlog = zlog.Level(zerolog.WarnLevel)
 	case "error":
-		zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+		zlog = zlog.Level(zerolog.ErrorLevel)
 	case "fatal":
-		zerolog.SetGlobalLevel(zerolog.FatalLevel)
+		zlog = zlog.Level(zerolog.FatalLevel)
 	case "panic":
-		zerolog.SetGlobalLevel(zerolog.PanicLevel)
+		zlog = zlog.Level(zerolog.PanicLevel)
 	case "trace":
-		zerolog.SetGlobalLevel(zerolog.TraceLevel)
+		zlog = zlog.Level(zerolog.TraceLevel)
 	default:
-		zerolog.SetGlobalLevel(zerolog.InfoLevel)
+		zlog = zlog.Level(zerolog.InfoLevel)
 	}
 
-	return &Logger{Log: zlog}
+	return &zlog
 }

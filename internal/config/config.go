@@ -1,11 +1,5 @@
 package config
 
-import (
-	"fmt"
-
-	"go-gin/pkg/config"
-)
-
 type Config struct {
 	Server struct {
 		Port    uint   `mapstructure:"port"`
@@ -30,16 +24,4 @@ type Config struct {
 	Users map[string]string `mapstructure:"users"`
 }
 
-var Instance *Config
-
-func Init(name string) *Config {
-	_config, err := config.ReadConfig(name, "yaml", []string{".", "./config", "../"})
-	if err != nil {
-		panic(fmt.Errorf("unable to read config: %s", err))
-	}
-
-	if err := _config.Unmarshal(&Instance); err != nil {
-		panic(fmt.Errorf("unable to unmarshal config: %s", err))
-	}
-	return Instance
-}
+var Instance *Config = &Config{}

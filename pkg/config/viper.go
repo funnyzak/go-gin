@@ -5,7 +5,7 @@ import (
 )
 
 // Read the configuration package with the given configuration name, type, and path list.
-func ReadConfig(configName string, configType string, configPathList []string) (*viper.Viper, error) {
+func ReadViperConfig(configName string, configType string, configPathList []string) (*viper.Viper, error) {
 	var err error
 	config := viper.New()
 	config.SetConfigName(configName)
