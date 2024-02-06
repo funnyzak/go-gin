@@ -9,8 +9,11 @@ import (
 	logger "go-gin/pkg/logger"
 
 	"github.com/rs/zerolog"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
+
+var Version = "0.0.1"
 
 var (
 	Config *config.Config
@@ -33,10 +36,29 @@ func InitConfig(name string) {
 	}
 }
 
+// Initialize the logger
 func InitLog(config *config.Config) {
 	logPath := config.Log.Path
 	if logPath == "" {
 		logPath = model.DefaultLogPath
 	}
 	Log = logger.NewLogger(config.Log.Level, logPath)
+}
+
+// InitDBFromPath 从给出的文件路径中加载数据库
+func InitDBFromPath(path string) {
+	var err error
+	DB, err = gorm.Open(sqlite.Open(path), &gorm.Config{
+		CreateBatchSize: 200,
+	})
+	if err != nil {
+		panic(err)
+	}
+	if Config.Debug {
+		DB = DB.Debug()
+	}
+	// err = DB.AutoMigrate(&model.User{}, &model.Role{}, &model.Permission{}, &model.UserRole{}, &model.RolePermission{})
+	if err != nil {
+		panic(err)
+	}
 }

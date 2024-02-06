@@ -5,7 +5,8 @@ type Config struct {
 		Port    uint   `mapstructure:"port"`
 		BaseUrl string `mapstructure:"base_url"`
 	} `mapstructure:"server"`
-	Debug     bool `mapstructure:"debug"`
+	Debug     bool   `mapstructure:"debug"`
+	DB_Path   string `mapstructure:"db_path"`
 	RateLimit struct {
 		Max int `mapstructure:"max"`
 	} `mapstructure:"rate_limit"`

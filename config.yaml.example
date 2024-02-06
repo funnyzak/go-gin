@@ -6,7 +6,9 @@ debug: true
 
 log:
   level: debug
-  path: logs/log.log
+  path: logs/go-gin.log
+
+db_path: db/go-gin.sqlite
 
 rate_limit:
   max: 100 # requests per minute

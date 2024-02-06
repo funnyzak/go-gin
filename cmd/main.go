@@ -23,6 +23,7 @@ func main() {
 
 	singleton.InitConfig(webServerCliParam.ConfigName)
 	singleton.InitLog(singleton.Config)
+	// singleton.InitDBFromPath(singleton.Config.DB_Path)
 	initService()
 
 	webserver.ServerWeb(singleton.Config)
