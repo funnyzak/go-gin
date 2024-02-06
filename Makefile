@@ -14,8 +14,12 @@ dev:
 deps:
 	@echo "Installing dependencies..."
 	@go mod download
+	@go mod verify
+	@go mod tidy
+	@echo "Dependencies installed."
 
 .PHONY: build
 build:
 	@echo "Building binary..."
 	@bash ./script/build.sh $(build_args)
+	@echo "Binary built."

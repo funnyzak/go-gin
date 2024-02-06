@@ -7,11 +7,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 
-	"github.com/funnyzak/gogin/internal/config"
-	"github.com/funnyzak/gogin/internal/log"
-	"github.com/funnyzak/gogin/model"
+	"github.com/funnyzak/go-gin/internal/config"
+	"github.com/funnyzak/go-gin/internal/log"
+	"github.com/funnyzak/go-gin/model"
 
-	APIUtils "github.com/funnyzak/gogin/internal/api"
+	APIUtils "github.com/funnyzak/go-gin/internal/api"
 )
 
 // Login authenticates the user

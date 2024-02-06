@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/funnyzak/gogin/cmd/webserver"
-	"github.com/funnyzak/gogin/internal/config"
-	"github.com/funnyzak/gogin/internal/log"
+	"github.com/funnyzak/go-gin/cmd/webserver"
+	"github.com/funnyzak/go-gin/internal/config"
+	"github.com/funnyzak/go-gin/internal/log"
 	flag "github.com/spf13/pflag"
 )
 

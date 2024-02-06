@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 
-	"github.com/funnyzak/gogin/pkg/config"
+	"github.com/funnyzak/go-gin/pkg/config"
 )
 
 type Config struct {

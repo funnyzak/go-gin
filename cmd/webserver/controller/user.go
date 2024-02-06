@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/funnyzak/gogin/internal/config"
-	"github.com/funnyzak/gogin/pkg/utils"
+	"github.com/funnyzak/go-gin/internal/config"
+	"github.com/funnyzak/go-gin/pkg/utils"
 	"github.com/gin-gonic/gin"
 
-	APIUtils "github.com/funnyzak/gogin/internal/api"
+	APIUtils "github.com/funnyzak/go-gin/internal/api"
 )
 
 func UploadCreation(c *gin.Context) {

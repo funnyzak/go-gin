@@ -3,7 +3,7 @@ package middleware
 import (
 	"time"
 
-	"github.com/funnyzak/gogin/internal/log"
+	"github.com/funnyzak/go-gin/internal/log"
 	"github.com/gin-gonic/gin"
 )
 

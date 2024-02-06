@@ -5,12 +5,12 @@ import (
 	"io/fs"
 	"net/http"
 
-	"github.com/funnyzak/gogin/cmd/webserver/controller"
-	"github.com/funnyzak/gogin/cmd/webserver/middleware"
-	"github.com/funnyzak/gogin/internal/config"
-	"github.com/funnyzak/gogin/internal/log"
-	"github.com/funnyzak/gogin/internal/tmpl"
-	"github.com/funnyzak/gogin/resource"
+	"github.com/funnyzak/go-gin/cmd/webserver/controller"
+	"github.com/funnyzak/go-gin/cmd/webserver/middleware"
+	"github.com/funnyzak/go-gin/internal/config"
+	"github.com/funnyzak/go-gin/internal/log"
+	"github.com/funnyzak/go-gin/internal/tmpl"
+	"github.com/funnyzak/go-gin/resource"
 	"github.com/gin-gonic/gin"
 )
 

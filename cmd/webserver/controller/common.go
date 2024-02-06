@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/funnyzak/gogin/model"
+	"github.com/funnyzak/go-gin/model"
 	"github.com/gin-gonic/gin"
 )
 
