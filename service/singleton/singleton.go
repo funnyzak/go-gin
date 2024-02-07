@@ -61,7 +61,7 @@ func InitDBFromPath(path string) {
 	if Conf.Debug {
 		DB = DB.Debug()
 	}
-	err = DB.AutoMigrate(&model.User{})
+	err = DB.AutoMigrate(&model.User{}, &model.Post{})
 	if err != nil {
 		panic(err)
 	}
