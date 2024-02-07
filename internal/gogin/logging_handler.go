@@ -1,4 +1,4 @@
-package middleware
+package gogin
 
 import (
 	"go-gin/service/singleton"

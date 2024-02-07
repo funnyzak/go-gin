@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"go-gin/internal/gogin"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,7 +18,7 @@ func (cp *commonPage) serve() {
 }
 
 func (p *commonPage) home(c *gin.Context) {
-	c.HTML(http.StatusOK, "index", gin.H{})
+	c.HTML(http.StatusOK, "index", gogin.CommonEnvironment(c, gin.H{}))
 }
 
 func (p *commonPage) ping(c *gin.Context) {

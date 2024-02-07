@@ -1,4 +1,4 @@
-package config
+package gconfig
 
 const (
 	DefaultLogPath        = "logs/log.log"
@@ -11,12 +11,11 @@ type Config struct {
 	} `mapstructure:"server"`
 	Site struct {
 		Brand       string `mapstructure:"brand"`
-		description string `mapstructure:"description"`
-		BaseUrl     string `mapstructure:"base_url"`
-		CookieName  string `mapstructure:"cookie_name"`
+		Description string `mapstructure:"description"`
+		BaseURL     string `mapstructure:"base_url"`
 	} `mapstructure:"site"`
 	Debug     bool   `mapstructure:"debug"`
-	DB_Path   string `mapstructure:"db_path"`
+	DBPath    string `mapstructure:"db_path"`
 	RateLimit struct {
 		Max int `mapstructure:"max"`
 	} `mapstructure:"rate_limit"`
@@ -29,10 +28,10 @@ type Config struct {
 		Path  string `mapstructure:"path"`
 	} `mapstructure:"log"`
 	JWT struct {
-		Secret     string `mapstructure:"secret"`
-		Expiration int    `mapstructure:"expiration"`
+		AccessSecret           string `mapstructure:"access_secret"`
+		RefreshSecret          string `mapstructure:"refresh_secret"`
+		TokenExpiration        int    `mapstructure:"token_expiration"`
+		RefreshTokenExpiration int    `mapstructure:"refresh_token_expiration"`
 	} `mapstructure:"jwt"`
 	Users map[string]string `mapstructure:"users"`
 }
-
-var Instance *Config = &Config{}

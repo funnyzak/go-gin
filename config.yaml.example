@@ -1,5 +1,9 @@
 server:
   port: 8080
+
+site:
+  brand: Go-Gin
+  description: A simple web application using Go and Gin.
   base_url: http://localhost:8080
 
 debug: true
@@ -18,8 +22,10 @@ upload:
   max_size: 10485760 # 10MB
 
 jwt:
-  secret: qhkxjrRmYcVYKSEobqsvhxhtPVeTWquu
-  expiration: 525600 # minutes
+  access_secret: qhkxjrRmYcVYKSEobqsvhxhtPVeTWquu
+  refresh_secret: qhkxjrRmYcVYKSEobqsvhxhtPV3TWquu
+  access_token_expiration: 60 # minutes
+  refresh_token_expiration: 720 # minutes
 
 users:
   user1: password1

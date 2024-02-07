@@ -1,32 +1,52 @@
 package main
 
 import (
-	"go-gin/cmd/srv"
+	"context"
+	"go-gin/cmd/srv/controller"
 	"go-gin/service/singleton"
 
+	"github.com/ory/graceful"
 	flag "github.com/spf13/pflag"
 )
 
 type CliParam struct {
-	ConfigName string // 配置文件名称
+	ConfigName string // Config file name
+	Port       uint   // Server port
 }
 
 var (
-	svrCliParam CliParam
+	cliParam CliParam
 )
 
 func main() {
 	flag.CommandLine.ParseErrorsWhitelist.UnknownFlags = true
-	flag.StringVarP(&svrCliParam.ConfigName, "config", "c", "config", "config file name")
+	flag.StringVarP(&cliParam.ConfigName, "config", "c", "config", "config file name")
+	flag.UintVarP(&cliParam.Port, "port", "p", 0, "server port")
 	flag.Parse()
 	flag.Lookup("config").NoOptDefVal = "config"
 
-	singleton.InitConfig(svrCliParam.ConfigName)
+	singleton.InitConfig(cliParam.ConfigName)
 	singleton.InitLog(singleton.Conf)
-	// singleton.InitDBFromPath(singleton.Config.DB_Path)
+	singleton.InitDBFromPath(singleton.Conf.DBPath)
 	initService()
 
-	srv.Server(singleton.Conf)
+	port := singleton.Conf.Server.Port
+	if cliParam.Port != 0 {
+		port = cliParam.Port
+	}
+
+	srv := controller.ServerWeb(port)
+
+	if err := graceful.Graceful(func() error {
+		return srv.ListenAndServe()
+	}, func(c context.Context) error {
+		singleton.Log.Info().Msg("Graceful::START")
+		srv.Shutdown(c)
+		return nil
+	}); err != nil {
+		singleton.Log.Err(err).Msg("Graceful::Error")
+	}
+
 }
 
 func initService() {

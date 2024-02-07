@@ -2,20 +2,22 @@ package singleton
 
 import (
 	"fmt"
-	"go-gin/internal/config"
-
-	config_utils "go-gin/pkg/config"
-	logger "go-gin/pkg/logger"
+	"os"
 
 	"github.com/rs/zerolog"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+
+	"go-gin/internal/gconfig"
+	"go-gin/model"
+	"go-gin/pkg/logger"
+	"go-gin/pkg/utils"
 )
 
 var Version = "0.0.1"
 
 var (
-	Conf *config.Config
+	Conf *gconfig.Config
 	Log  *zerolog.Logger
 	DB   *gorm.DB
 )
@@ -25,7 +27,7 @@ func InitSingleton() {
 }
 
 func InitConfig(name string) {
-	_config, err := config_utils.ReadViperConfig(name, "yaml", []string{".", "./config", "../"})
+	_config, err := utils.ReadViperConfig(name, "yaml", []string{".", "./config", "../"})
 	if err != nil {
 		panic(fmt.Errorf("unable to read config: %s", err))
 	}
@@ -36,10 +38,10 @@ func InitConfig(name string) {
 }
 
 // Initialize the logger
-func InitLog(conf *config.Config) {
+func InitLog(conf *gconfig.Config) {
 	logPath := conf.Log.Path
 	if logPath == "" {
-		logPath = Conf.DB_Path
+		logPath = Conf.DBPath
 	}
 	Log = logger.NewLogger(conf.Log.Level, logPath)
 }
@@ -47,6 +49,9 @@ func InitLog(conf *config.Config) {
 // InitDBFromPath initialize the database from the given path
 func InitDBFromPath(path string) {
 	var err error
+	if err = utils.MkdirAllIfNotExists(path, os.ModePerm); err != nil {
+		panic(err)
+	}
 	DB, err = gorm.Open(sqlite.Open(path), &gorm.Config{
 		CreateBatchSize: 200,
 	})
@@ -56,7 +61,7 @@ func InitDBFromPath(path string) {
 	if Conf.Debug {
 		DB = DB.Debug()
 	}
-	// err = DB.AutoMigrate(&model.User{}, &model.Role{}, &model.Permission{}, &model.UserRole{}, &model.RolePermission{})
+	err = DB.AutoMigrate(&model.User{})
 	if err != nil {
 		panic(err)
 	}
