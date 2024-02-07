@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ServerWeb(config *config.Config) {
+func Server(config *config.Config) {
 	gin.SetMode(gin.ReleaseMode)
 	r := NewRoute(config)
 	if config.Debug {

@@ -13,8 +13,16 @@ import (
 	api_utils "go-gin/internal/api"
 )
 
-// Login authenticates the user
-func Login(c *gin.Context) {
+type userAuth struct {
+	r *gin.Engine
+}
+
+func (uap *userAuth) serve() {
+	uapr := uap.r.Group("user/auth")
+	uapr.POST("/login", uap.login)
+}
+
+func (uap *userAuth) login(c *gin.Context) {
 	var creds model.Credentials
 	// get the body of the POST request
 	err := c.BindJSON(&creds)
@@ -24,7 +32,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	users := singleton.Config.Users
+	users := singleton.Conf.Users
 	expectedPassword, ok := users[creds.Username]
 
 	if !ok || expectedPassword != creds.Password {
@@ -33,7 +41,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	expirationTime := time.Now().Add(time.Duration(singleton.Config.JWT.Expiration) * time.Minute)
+	expirationTime := time.Now().Add(time.Duration(singleton.Conf.JWT.Expiration) * time.Minute)
 	claims := &model.Claims{
 		Username: creds.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -43,7 +51,7 @@ func Login(c *gin.Context) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte(singleton.Config.JWT.Secret))
+	tokenString, err := token.SignedString([]byte(singleton.Conf.JWT.Secret))
 	if err != nil {
 		singleton.Log.Error().Msgf("Error signing token: %v", err)
 		api_utils.ResponseError(c, http.StatusInternalServerError, "Error signing token")
@@ -68,7 +76,7 @@ func Refresh(c *gin.Context) {
 
 	claims := &model.Claims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(singleton.Config.JWT.Secret), nil
+		return []byte(singleton.Conf.JWT.Secret), nil
 	})
 	if err != nil {
 		singleton.Log.Error().Msgf("Error parsing token: %v", err)
@@ -84,10 +92,10 @@ func Refresh(c *gin.Context) {
 		return
 	}
 
-	expirationTime := time.Now().Add(time.Duration(singleton.Config.JWT.Expiration) * time.Minute)
+	expirationTime := time.Now().Add(time.Duration(singleton.Conf.JWT.Expiration) * time.Minute)
 	claims.ExpiresAt = jwt.NewNumericDate(expirationTime)
 	token = jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err = token.SignedString([]byte(singleton.Config.JWT.Secret))
+	tokenString, err = token.SignedString([]byte(singleton.Conf.JWT.Secret))
 	if err != nil {
 		singleton.Log.Error().Msgf("Error signing token: %v", err)
 		api_utils.ResponseError(c, http.StatusInternalServerError, "Error signing token")

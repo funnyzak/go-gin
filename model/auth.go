@@ -15,3 +15,11 @@ type Claims struct {
 func (c *Credentials) IsValid() bool {
 	return c.Username != "" && c.Password != ""
 }
+
+func IsAuthorized(token string, secret string) bool {
+	claims := &Claims{}
+	_, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	})
+	return err == nil
+}

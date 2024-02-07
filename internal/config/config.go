@@ -1,10 +1,20 @@
 package config
 
+const (
+	DefaultLogPath        = "logs/log.log"
+	DefaultPprofRoutePath = "/debug/pprof"
+)
+
 type Config struct {
 	Server struct {
-		Port    uint   `mapstructure:"port"`
-		BaseUrl string `mapstructure:"base_url"`
+		Port uint `mapstructure:"port"`
 	} `mapstructure:"server"`
+	Site struct {
+		Brand       string `mapstructure:"brand"`
+		description string `mapstructure:"description"`
+		BaseUrl     string `mapstructure:"base_url"`
+		CookieName  string `mapstructure:"cookie_name"`
+	} `mapstructure:"site"`
 	Debug     bool   `mapstructure:"debug"`
 	DB_Path   string `mapstructure:"db_path"`
 	RateLimit struct {

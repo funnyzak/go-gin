@@ -1,33 +1,51 @@
-package srv
+package controller
 
 import (
-	"html/template"
+	"fmt"
+
 	"io/fs"
 	"net/http"
+	"text/template"
 
-	"go-gin/cmd/srv/controller"
+	"github.com/gin-contrib/pprof"
+	"github.com/gin-gonic/gin"
+
 	"go-gin/cmd/srv/middleware"
 	"go-gin/internal/config"
 	"go-gin/internal/tmpl"
+	"go-gin/model"
 	"go-gin/resource"
 	"go-gin/service/singleton"
-
-	"github.com/gin-gonic/gin"
 )
 
-func NewRoute(config *config.Config) *gin.Engine {
+func ServerWeb(port uint) *http.Server {
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
-
 	loadTemplates(r)
 
-	serveStatic(r)
-	// Serve uploaded files
-	r.Static("/upload", config.Upload.Dir)
-
-	routers(r)
-
-	return r
+	if config.Debug {
+		gin.SetMode(gin.DebugMode)
+		pprof.Register(r, model.DefaultPprofRoutePath)
+	}
+	return &http.Server{
+		Addr:    ":" + port,
+		Handler: nil,
+	}
 }
+
+// func routers(r *gin.Engine) {
+// 	r := gin.Default()
+
+// 	loadTemplates(r)
+
+// 	serveStatic(r)
+// 	// Serve uploaded files
+// 	r.Static("/upload", config.Upload.Dir)
+
+// 	routers(r)
+
+// 	return r
+// }
 
 // Serve static files
 func serveStatic(r *gin.Engine) {
@@ -52,16 +70,29 @@ func loadTemplates(r *gin.Engine) {
 }
 
 func routers(r *gin.Engine) {
-	// Logging middleware
 	r.Use(middleware.LoggingHandler())
-	// Rate limit middleware
 	r.Use(middleware.RateLimiterHandler(singleton.Conf.RateLimit.Max))
+
+	// Serve common pages, e.g. home, ping
+	cp := commonPage{r: r}
+	cp.serve()
+
+	// Serve share pages, e.g. post
+	sp := sharePage{r: r}
+	sp.serve()
+
+	//API
+	api := r.Group("api/v1")
+	{
+		uap := &userAuthAPI{api)
+		uap.serve()
+	}
 
 	r.POST("/login", controller.Login)
 	userGroup := r.Group("/v1/user")
 	{
 		// Set auth middleware
-		userGroup.Use(middleware.Authorize())
+		userGroup.Use(middleware.AuthHanlder())
 		userGroup.GET("/refresh", controller.Refresh)
 		userGroup.POST("/upload/creation", controller.UploadCreation)
 	}
@@ -71,8 +102,14 @@ func routers(r *gin.Engine) {
 		shareGroup.GET("/creation/:share_num", controller.GetCreation)
 	}
 
-	r.GET("/", controller.Home)
-	r.GET("/health", controller.HealthCheck)
-	r.NoRoute(controller.PageNotFound)
-	r.NoMethod(controller.PageNotFound)
+	r.NoRoute(pageNotFound)
+	r.NoMethod(pageNotFound)
+}
+
+func pageNotFound(c *gin.Context) {
+	c.JSON(http.StatusNotFound,
+		&model.ErrorResponse{
+			Code:    http.StatusNotFound,
+			Message: fmt.Sprintf("Resource not found: %s", c.Request.RequestURI),
+		})
 }

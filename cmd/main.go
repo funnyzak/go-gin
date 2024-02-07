@@ -22,11 +22,11 @@ func main() {
 	flag.Lookup("config").NoOptDefVal = "config"
 
 	singleton.InitConfig(svrCliParam.ConfigName)
-	singleton.InitLog(singleton.Config)
+	singleton.InitLog(singleton.Conf)
 	// singleton.InitDBFromPath(singleton.Config.DB_Path)
 	initService()
 
-	srv.ServerWeb(singleton.Config)
+	srv.Server(singleton.Conf)
 }
 
 func initService() {

@@ -3,7 +3,6 @@ package singleton
 import (
 	"fmt"
 	"go-gin/internal/config"
-	"go-gin/model"
 
 	config_utils "go-gin/pkg/config"
 	logger "go-gin/pkg/logger"
@@ -16,9 +15,9 @@ import (
 var Version = "0.0.1"
 
 var (
-	Config *config.Config
-	Log    *zerolog.Logger
-	DB     *gorm.DB
+	Conf *config.Config
+	Log  *zerolog.Logger
+	DB   *gorm.DB
 )
 
 func InitSingleton() {
@@ -31,21 +30,21 @@ func InitConfig(name string) {
 		panic(fmt.Errorf("unable to read config: %s", err))
 	}
 
-	if err := _config.Unmarshal(&Config); err != nil {
+	if err := _config.Unmarshal(&Conf); err != nil {
 		panic(fmt.Errorf("unable to unmarshal config: %s", err))
 	}
 }
 
 // Initialize the logger
-func InitLog(config *config.Config) {
-	logPath := config.Log.Path
+func InitLog(conf *config.Config) {
+	logPath := conf.Log.Path
 	if logPath == "" {
-		logPath = model.DefaultLogPath
+		logPath = Conf.DB_Path
 	}
-	Log = logger.NewLogger(config.Log.Level, logPath)
+	Log = logger.NewLogger(conf.Log.Level, logPath)
 }
 
-// InitDBFromPath 从给出的文件路径中加载数据库
+// InitDBFromPath initialize the database from the given path
 func InitDBFromPath(path string) {
 	var err error
 	DB, err = gorm.Open(sqlite.Open(path), &gorm.Config{
@@ -54,7 +53,7 @@ func InitDBFromPath(path string) {
 	if err != nil {
 		panic(err)
 	}
-	if Config.Debug {
+	if Conf.Debug {
 		DB = DB.Debug()
 	}
 	// err = DB.AutoMigrate(&model.User{}, &model.Role{}, &model.Permission{}, &model.UserRole{}, &model.RolePermission{})

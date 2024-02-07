@@ -24,10 +24,10 @@ func UploadCreation(c *gin.Context) {
 		return
 	}
 	new_id := utils.GenHexStr(32)
-	c.SaveUploadedFile(file, fmt.Sprintf("%s/creation/%s.png", singleton.Config.Upload.Dir, new_id))
+	c.SaveUploadedFile(file, fmt.Sprintf("%s/creation/%s.png", singleton.Conf.Upload.Dir, new_id))
 
 	api_utils.Response(c, gin.H{
 		"creation_id": new_id,
-		"share_url":   fmt.Sprintf("%s/share/creation/%s", singleton.Config.Server.BaseUrl, new_id),
+		"share_url":   fmt.Sprintf("%s/share/creation/%s", singleton.Conf.Server.BaseUrl, new_id),
 	})
 }
