@@ -1,13 +1,12 @@
-package middleware
+package gogin
 
 import (
+	"go-gin/pkg/mygin"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/time/rate"
-
-	api_utils "go-gin/internal/api"
 )
 
 func RateLimiterHandler(reqsPerMin int) gin.HandlerFunc {
@@ -20,7 +19,10 @@ func RateLimiterHandler(reqsPerMin int) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		if !limiter.Allow() {
-			api_utils.ResponseError(c, http.StatusTooManyRequests, "too many requests")
+			ShowErrorPage(c, mygin.ErrInfo{
+				Code: http.StatusTooManyRequests,
+				Msg:  "too many requests",
+			}, false)
 		}
 		c.Next()
 	}

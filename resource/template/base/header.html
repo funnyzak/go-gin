@@ -1,0 +1,15 @@
+{{define "base/header"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta content="telephone=no" name="format-detection">
+    <title>{{.Title}}</title>
+    <link rel="shortcut icon" type="image/png" href="{{ .Conf.Site.BaseURL }}/static/asset/image/logo.png" />
+    <link rel="mask-icon" href="{{ .Conf.Site.BaseURL }}/static/asset/logo.svg" color="#0389c8">
+    <link rel="stylesheet" href="{{ .Conf.Site.BaseURL }}/static/asset/style/base.css">
+</head>
+<body>
+{{end}}
