@@ -1,26 +1,22 @@
 {{ define "index" }}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>GoGin</title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-<style>
-  .centered-text {
-    padding: 0 20px;
-    display: grid;
-    align-items: center;
-    justify-content: center;
-    height: 98vh;
-    overflow: hidden;
-    font-size: 30px;
-    line-height: 35px;
-    text-align: center;
-  }
-</style>
-<div class="centered-text"><b>GO GIN</b></div>
-</body>
-</html>
+{{template "base/header" .}}
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: white;
+            font-family: Arial, sans-serif;
+        }
+        .content {
+            text-align: center;
+        }
+    </style>
+    <div class="content">
+        <h1>{{ .Conf.Site.Brand }}</h1>
+        <p>{{ .Conf.Site.Description }}</p>
+    </div>
+{{template "base/footer" .}}
 {{ end }}
