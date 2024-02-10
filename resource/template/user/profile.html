@@ -1,0 +1,19 @@
+{{ define "user/profile" }}
+{{template "base/header" .}}
+  <div class="profile-header">
+      <h1>用户名: User123</h1>
+      <div>
+          <button>注销登录</button>
+          <button>发布Post</button>
+      </div>
+  </div>
+
+  <div class="one-post">
+      <h2>Post Title 1</h2>
+      <p>发布时间: 2024-02-09 19:03:29</p>
+      <button>删除</button>
+      <button>编辑</button>
+      <button>分享</button>
+  </div>
+{{template "base/footer" .}}
+{{ end }}

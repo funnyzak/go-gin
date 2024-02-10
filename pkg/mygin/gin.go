@@ -2,6 +2,7 @@ package mygin
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -35,6 +36,16 @@ func RetrieveToken(c *gin.Context, tokenName string) (string, error) {
 		}
 	}
 	return "", fmt.Errorf("token not found")
+}
+
+// Extract the token from the request
+func RetrieveTokenFromAuthorization(r *http.Request) string {
+	bearToken := r.Header.Get("Authorization")
+	strArr := strings.Split(bearToken, " ")
+	if len(strArr) == 2 {
+		return strArr[1]
+	}
+	return ""
 }
 
 // MatchedPath returns the matched path of the request

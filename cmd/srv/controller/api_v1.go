@@ -22,10 +22,15 @@ func (v *apiV1) serve() {
 		Btn:      "Log in",
 		Redirect: fmt.Sprintf("%s/login", singleton.Conf.Site.BaseURL),
 	}))
-	r.PUT("/post", v.putPost)
 
 	user := v.r.Group("user")
 	{
+		r.PUT("/post", v.putPost)
+		r.POST("/post", v.postPost)
+		r.GET("/post/:id", v.getPost)
+		r.DELETE("/post/:id", v.deletePost)
+		r.GET("/posts", v.getPosts)
+
 		user.GET("/info", v.getUserInfo)
 		user.GET("/logout", v.logout)
 		user.GET("/refresh", v.refresh)
@@ -35,6 +40,30 @@ func (v *apiV1) serve() {
 func (v *apiV1) putPost(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "post",
+	})
+}
+
+func (v *apiV1) postPost(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"message": "post",
+	})
+}
+
+func (v *apiV1) getPost(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"message": "post",
+	})
+}
+
+func (v *apiV1) deletePost(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"message": "post",
+	})
+}
+
+func (v *apiV1) getPosts(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"message": "posts",
 	})
 }
 

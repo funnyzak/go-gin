@@ -150,3 +150,35 @@ form.gogin-form input[type='button'] {
   color: var(--c-text);
   border: 1px solid var(--c-border-dark);
 }
+
+button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #0056b3;
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #ccc;
+}
+
+.one-post {
+  border-bottom: 1px solid #ccc;
+  padding: 20px;
+}
+.one-post h2 {
+  margin: 0;
+}
+.one-post p {
+  color: #999;
+}

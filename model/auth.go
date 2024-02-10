@@ -3,8 +3,6 @@ package model
 import (
 	"fmt"
 	"go-gin/internal/gconfig"
-	"net/http"
-	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -65,21 +63,10 @@ func (m Auth) CreateToken(username string, conf *gconfig.Config) (*TokenDetails,
 	return td, nil
 }
 
-// Extract the token from the request
-func (m Auth) ExtractTokenFromAuthorization(r *http.Request) string {
-	bearToken := r.Header.Get("Authorization")
-	strArr := strings.Split(bearToken, " ")
-	if len(strArr) == 2 {
-		return strArr[1]
-	}
-	return ""
-}
-
 // Verify the token from the request
-func (m Auth) VerifyToken(r *http.Request, conf *gconfig.Config) (*jwt.Token, error) {
-	tokenString := m.ExtractTokenFromAuthorization(r)
+func (m Auth) VerifyToken(tokenString string, conf *gconfig.Config) (*jwt.Token, error) {
 	if tokenString == "" {
-		return nil, fmt.Errorf("Can't find token from request")
+		return nil, fmt.Errorf("token not found")
 	}
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -94,20 +81,20 @@ func (m Auth) VerifyToken(r *http.Request, conf *gconfig.Config) (*jwt.Token, er
 }
 
 // TokenValid from the request
-func (m Auth) TokenValid(r *http.Request, conf *gconfig.Config) error {
-	token, err := m.VerifyToken(r, conf)
+func (m Auth) TokenValid(tokenString string, conf *gconfig.Config) error {
+	token, err := m.VerifyToken(tokenString, conf)
 	if err != nil {
 		return err
 	}
-	if _, ok := token.Claims.(jwt.Claims); !ok && !token.Valid {
+	if !token.Valid {
 		return err
 	}
 	return nil
 }
 
 // Get the token metadata from the request
-func (m Auth) ExtractTokenMetadata(r *http.Request, conf *gconfig.Config) (*AccessDetails, error) {
-	token, err := m.VerifyToken(r, conf)
+func (m Auth) ExtractTokenMetadata(tokenString string, conf *gconfig.Config) (*AccessDetails, error) {
+	token, err := m.VerifyToken(tokenString, conf)
 	if err != nil {
 		return nil, err
 	}
