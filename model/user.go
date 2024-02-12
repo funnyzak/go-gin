@@ -30,12 +30,12 @@ type User struct {
 
 var auth = new(Auth)
 
-func (user User) Login(form mappers.LoginForm, db *gorm.DB, conf *gconfig.Config) (token Token, err error) {
+func (u User) Login(form mappers.LoginForm, db *gorm.DB, conf *gconfig.Config) (token Token, err error) {
 
-	db.Model(&User{}).Where("username = ?", form.UserName).First(&user)
+	db.Model(&User{}).Where("username = ?", form.UserName).First(&u)
 
 	bytePassword := []byte(form.Password)
-	byteHashedPassword := []byte(user.Password)
+	byteHashedPassword := []byte(u.Password)
 
 	err = bcrypt.CompareHashAndPassword(byteHashedPassword, bytePassword)
 
@@ -43,7 +43,7 @@ func (user User) Login(form mappers.LoginForm, db *gorm.DB, conf *gconfig.Config
 		return token, errors.New("invalid password")
 	}
 
-	tokenDetails, err := auth.CreateToken(user.UserName, conf)
+	tokenDetails, err := auth.CreateToken(u.UserName, conf)
 
 	if err == nil {
 		token.AccessToken = tokenDetails.AccessToken
@@ -53,10 +53,10 @@ func (user User) Login(form mappers.LoginForm, db *gorm.DB, conf *gconfig.Config
 	return token, nil
 }
 
-func (u User) Register(form mappers.RegisterForm, db *gorm.DB, conf *gconfig.Config) (user User, err error) {
+func (u User) Register(form mappers.RegisterForm, db *gorm.DB, conf *gconfig.Config) (err error) {
 	err = db.Model(&User{}).Where("username = ?", form.UserName).First(&u).Error
 	if err != nil {
-		return user, err
+		return err
 	}
 
 	bytePassword := []byte(form.Password)
@@ -65,15 +65,92 @@ func (u User) Register(form mappers.RegisterForm, db *gorm.DB, conf *gconfig.Con
 		panic(err)
 	}
 
-	user.UserName = form.UserName
-	user.Email = form.Email
-	user.Password = string(hashedPassword)
-	user.VerificationCode = uuid.NewV4().String()
-	user.ForgotPasswordCode = uuid.NewV4().String()
-	err = db.Create(&user).Error
+	u.UserName = form.UserName
+	u.Email = form.Email
+	u.Password = string(hashedPassword)
+	u.VerificationCode = uuid.NewV4().String()
+	u.ForgotPasswordCode = uuid.NewV4().String()
+	err = db.Create(&u).Error
+	return err
+}
+
+func (u User) GetByUsername(username string, db *gorm.DB) (err error) {
+	err = db.Model(&User{}).Where("username = ?", username).First(&u).Error
+	return err
+}
+
+func (u User) GetByEmail(email string, db *gorm.DB) (err error) {
+	err = db.Model(&User{}).Where("email = ?", email).First(&u).Error
+	return err
+}
+
+func (u User) GetByVerificationCode(verificationCode string, db *gorm.DB) (err error) {
+	err = db.Model(&User{}).Where("verification_code = ?", verificationCode).First(&u).Error
+	return err
+}
+
+func (u User) GetByForgotPasswordCode(forgotPasswordCode string, db *gorm.DB) (err error) {
+	err = db.Model(&User{}).Where("forgot_password_code = ?", forgotPasswordCode).First(&u).Error
+	return err
+}
+
+func (u User) UpdateVerificationCode(username string, db *gorm.DB) (err error) {
+	err = db.Model(&User{}).Where("username = ?", username).First(&u).Error
 	if err != nil {
-		return user, err
+		return err
 	}
 
-	return user, err
+	u.VerificationCode = uuid.NewV4().String()
+	err = db.Save(&u).Error
+	return err
+}
+
+func (u User) UpdateForgotPasswordCode(username string, db *gorm.DB) (err error) {
+	err = db.Model(&User{}).Where("username = ?", username).First(&u).Error
+	if err != nil {
+		return err
+	}
+
+	u.ForgotPasswordCode = uuid.NewV4().String()
+	err = db.Save(&u).Error
+	return err
+}
+
+func (u User) UpdatePassword(username string, password string, db *gorm.DB) (err error) {
+	err = db.Model(&User{}).Where("username = ?", username).First(&u).Error
+	if err != nil {
+		return err
+	}
+
+	bytePassword := []byte(password)
+	hashedPassword, err := bcrypt.GenerateFromPassword(bytePassword, bcrypt.DefaultCost)
+	if err != nil {
+		panic(err)
+	}
+
+	u.Password = string(hashedPassword)
+	err = db.Save(&u).Error
+	return err
+}
+
+func (u User) UpdateEmail(username string, email string, db *gorm.DB) (err error) {
+	err = db.Model(&User{}).Where("username = ?", username).First(&u).Error
+	if err != nil {
+		return err
+	}
+
+	u.Email = email
+	err = db.Save(&u).Error
+	return err
+}
+
+func (u User) UpdateAvatarURL(username string, avatarURL string, db *gorm.DB) (err error) {
+	err = db.Model(&User{}).Where("username = ?", username).First(&u).Error
+	if err != nil {
+		return err
+	}
+
+	u.AvatarURL = avatarURL
+	err = db.Save(&u).Error
+	return err
 }

@@ -13,6 +13,7 @@ type Config struct {
 		Brand       string `mapstructure:"brand"`
 		Description string `mapstructure:"description"`
 		BaseURL     string `mapstructure:"base_url"`
+		CookieName  string `mapstructure:"cookie_name"`
 	} `mapstructure:"site"`
 	Debug     bool   `mapstructure:"debug"`
 	DBPath    string `mapstructure:"db_path"`

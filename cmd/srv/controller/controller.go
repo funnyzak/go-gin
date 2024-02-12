@@ -86,6 +86,10 @@ func routers(r *gin.Engine) {
 	sp := showPage{r: r}
 	sp.serve()
 
+	// User pages, e.g. profile, setting
+	up := userPage{r: r}
+	up.serve()
+
 	// Serve API
 	api := r.Group("api")
 	{
