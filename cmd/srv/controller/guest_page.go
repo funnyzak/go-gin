@@ -26,9 +26,17 @@ func (gp *guestPage) serve() {
 }
 
 func (gp *guestPage) register(c *gin.Context) {
-	c.HTML(http.StatusOK, "register", gin.H{})
+	c.HTML(http.StatusOK, "register", gogin.CommonEnvironment(
+		c, gin.H{
+			"Title": "Register",
+		},
+	))
 }
 
 func (gp *guestPage) login(c *gin.Context) {
-	c.HTML(http.StatusOK, "login", gin.H{})
+	c.HTML(http.StatusOK, "login", gogin.CommonEnvironment(
+		c, gin.H{
+			"Title": "Login",
+		},
+	))
 }

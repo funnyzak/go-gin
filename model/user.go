@@ -12,20 +12,20 @@ import (
 
 type User struct {
 	Common
-	UserName           string `json:"username,omitempty"`
-	Password           string `json:"password,omitempty"`
-	ForgotPasswordCode string `json:"forgot_password_code,omitempty"`
-	VerificationCode   string `json:"verification_code,omitempty"`
+	UserName           string `json:"username,omitempty" gorm:"unique;column:username"`
+	Password           string `json:"password,omitempty" gorm:"column:password"`
+	ForgotPasswordCode string `json:"forgot_password_code,omitempty" gorm:"column:forgot_password_code"`
+	VerificationCode   string `json:"verification_code,omitempty" gorm:"column:verification_code"`
 
 	// Optional
-	Email     string `json:"email,omitempty"`
-	Locked    bool   `json:"locked,omitempty"`
-	Veryfied  bool   `json:"veryfied,omitempty"`
-	AvatarURL string `json:"avatar_url,omitempty"`
-	NickName  string `json:"nickname,omitempty"`
-	Phone     string `json:"phone,omitempty"`
-	Blog      string `json:"blog,omitempty"`
-	Bio       string `json:"bio,omitempty"`
+	Email     *string `json:"email,omitempty" gorm:"column:email"`
+	Locked    bool    `json:"locked,omitempty" gorm:"column:locked"`
+	Veryfied  bool    `json:"veryfied,omitempty" gorm:"column:veryfied"`
+	AvatarURL *string `json:"avatar_url,omitempty" gorm:"column:avatar_url"`
+	NickName  *string `json:"nickname,omitempty" gorm:"column:nickname"`
+	Phone     *string `json:"phone,omitempty" gorm:"column:phone"`
+	Blog      *string `json:"blog,omitempty" gorm:"column:blog"`
+	Bio       *string `json:"bio,omitempty" gorm:"column:bio"`
 }
 
 var auth = new(Auth)
@@ -55,8 +55,8 @@ func (u User) Login(form mappers.LoginForm, db *gorm.DB, conf *gconfig.Config) (
 
 func (u User) Register(form mappers.RegisterForm, db *gorm.DB, conf *gconfig.Config) (err error) {
 	err = db.Model(&User{}).Where("username = ?", form.UserName).First(&u).Error
-	if err != nil {
-		return err
+	if err == nil {
+		return errors.New("username already exists")
 	}
 
 	bytePassword := []byte(form.Password)
@@ -133,7 +133,7 @@ func (u User) UpdatePassword(username string, password string, db *gorm.DB) (err
 	return err
 }
 
-func (u User) UpdateEmail(username string, email string, db *gorm.DB) (err error) {
+func (u User) UpdateEmail(username string, email *string, db *gorm.DB) (err error) {
 	err = db.Model(&User{}).Where("username = ?", username).First(&u).Error
 	if err != nil {
 		return err
@@ -144,7 +144,7 @@ func (u User) UpdateEmail(username string, email string, db *gorm.DB) (err error
 	return err
 }
 
-func (u User) UpdateAvatarURL(username string, avatarURL string, db *gorm.DB) (err error) {
+func (u User) UpdateAvatarURL(username string, avatarURL *string, db *gorm.DB) (err error) {
 	err = db.Model(&User{}).Where("username = ?", username).First(&u).Error
 	if err != nil {
 		return err

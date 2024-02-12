@@ -56,3 +56,11 @@ func RecordPath(c *gin.Context) {
 	}
 	c.Set("MatchedPath", url)
 }
+
+func BindForm(c *gin.Context, isForm bool, form interface{}) error {
+	if isForm {
+		return c.ShouldBind(form)
+	} else {
+		return c.ShouldBindJSON(form)
+	}
+}
