@@ -19,7 +19,7 @@ func (gp *guestPage) serve() {
 		IsPage:   true,
 		Msg:      "You are already logged in",
 		Btn:      "Return to home",
-		Redirect: singleton.Conf.Site.BaseURL,
+		Redirect: singleton.Conf.Site.BaseURL + "/user/profile",
 	}))
 	gr.GET("/register", gp.register)
 	gr.GET("/login", gp.login)

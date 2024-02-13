@@ -30,7 +30,7 @@ type User struct {
 
 var auth = new(Auth)
 
-func (u User) Login(form mappers.LoginForm, db *gorm.DB, conf *gconfig.Config) (token Token, err error) {
+func (u User) Login(form mappers.LoginForm, db *gorm.DB, conf *gconfig.Config) (token *TokenDetails, err error) {
 
 	db.Model(&User{}).Where("username = ?", form.UserName).First(&u)
 
@@ -43,14 +43,7 @@ func (u User) Login(form mappers.LoginForm, db *gorm.DB, conf *gconfig.Config) (
 		return token, errors.New("invalid password")
 	}
 
-	tokenDetails, err := auth.CreateToken(u.UserName, conf)
-
-	if err == nil {
-		token.AccessToken = tokenDetails.AccessToken
-		token.RefreshToken = tokenDetails.RefreshToken
-	}
-
-	return token, nil
+	return auth.CreateToken(u.UserName, conf)
 }
 
 func (u User) Register(form mappers.RegisterForm, db *gorm.DB, conf *gconfig.Config) (err error) {

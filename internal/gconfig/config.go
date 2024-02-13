@@ -31,7 +31,7 @@ type Config struct {
 	JWT struct {
 		AccessSecret           string `mapstructure:"access_secret"`
 		RefreshSecret          string `mapstructure:"refresh_secret"`
-		TokenExpiration        int    `mapstructure:"token_expiration"`
+		AccessTokenExpiration  int    `mapstructure:"access_token_expiration"`
 		RefreshTokenExpiration int    `mapstructure:"refresh_token_expiration"`
 	} `mapstructure:"jwt"`
 	Users map[string]string `mapstructure:"users"`

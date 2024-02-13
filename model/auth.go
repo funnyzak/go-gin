@@ -23,17 +23,12 @@ type AccessDetails struct {
 	UserName   string
 }
 
-type Token struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-}
-
 type Auth struct{}
 
 // CreateToken by username
 func (m Auth) CreateToken(username string, conf *gconfig.Config) (*TokenDetails, error) {
 	td := &TokenDetails{}
-	td.AtExpires = time.Now().Add(time.Minute * time.Duration(conf.JWT.TokenExpiration)).Unix()
+	td.AtExpires = time.Now().Add(time.Minute * time.Duration(conf.JWT.AccessTokenExpiration)).Unix()
 	td.AccessUUID = uuid.NewV4().String()
 
 	td.RtExpires = time.Now().Add(time.Minute * time.Duration(conf.JWT.RefreshTokenExpiration)).Unix()
