@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"go-gin/internal/gogin"
+	"go-gin/pkg/mygin"
 	"go-gin/service/singleton"
 
 	"github.com/gin-gonic/gin"
@@ -38,9 +39,8 @@ func (v *apiV1) serve() {
 }
 
 func (v *apiV1) logout(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "logout",
-	})
+	c.SetCookie(singleton.Conf.Site.CookieName, "", -1, "/", "", false, true)
+	mygin.ResponseJSON(c, 200, gin.H{}, "logout success")
 }
 
 func (v *apiV1) refresh(c *gin.Context) {
