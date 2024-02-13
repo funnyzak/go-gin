@@ -44,8 +44,13 @@ func (v *apiV1) serve() {
 var authModel = model.Auth{}
 
 func (v *apiV1) logout(c *gin.Context) {
+	isPage := utils.ParseBool(c.Query("page"), false)
 	c.SetCookie(singleton.Conf.Site.CookieName, "", -1, "/", "", false, true)
-	mygin.ResponseJSON(c, 200, gin.H{}, "logout success")
+	if isPage {
+		gogin.ShowMessagePage(c, "Logout success", singleton.Conf.Site.BaseURL, "Back to home")
+	} else {
+		mygin.ResponseJSON(c, 200, gin.H{}, "logout success")
+	}
 }
 
 func (v *apiV1) refresh(c *gin.Context) {

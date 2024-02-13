@@ -43,3 +43,12 @@ func ShowErrorPage(c *gin.Context, i mygin.ErrInfo, isPage bool) {
 	}
 	c.Abort()
 }
+
+func ShowMessagePage(c *gin.Context, msg, link, btn string) {
+	c.HTML(http.StatusOK, "message", CommonEnvironment(c, gin.H{
+		"Msg":   msg,
+		"Link":  link,
+		"Btn":   btn,
+	}))
+	c.Abort()
+}

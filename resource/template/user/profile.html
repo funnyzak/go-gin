@@ -3,8 +3,8 @@
   <div class="profile-header">
       <h1>用户名: {{ .User.UserName }}</h1>
       <div>
-          <button>注销登录</button>
-          <button>发布Post</button>
+          <button onclick="location.href='{{ .Conf.Site.BaseURL }}/api/v1/user/logout?page=1'">注销登录</button>
+          <button onclick="location.href='{{ .Conf.Site.BaseURL}}/user/post'">发布Post</button>
       </div>
   </div>
 
