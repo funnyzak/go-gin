@@ -112,3 +112,39 @@ func (m Auth) ExtractTokenMetadata(tokenString string, conf *gconfig.Config) (*A
 	}
 	return nil, err
 }
+
+func (m Auth) RefreshToken(refreshToken string, conf *gconfig.Config) (*Token, error) {
+	// Verify the token
+	token, err := jwt.Parse(refreshToken, func(token *jwt.Token) (interface{}, error) {
+		// Make sure that the token method conform to "SigningMethodHMAC"
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(conf.JWT.RefreshSecret), nil
+	})
+	// If there is an error, the token must have expired
+	if err != nil {
+		return nil, err
+	}
+	if !token.Valid {
+		return nil, err
+	}
+	// Since token is valid, get the uuid:
+	claims, ok := token.Claims.(jwt.MapClaims) // the token claims should conform to MapClaims
+	if ok && token.Valid {
+		userName := claims["user_id"].(string)
+		if userName == "" {
+			return nil, fmt.Errorf("user_id not found")
+		}
+		// Create new pairs of refresh and access tokens
+		ts, createErr := m.CreateToken(userName, conf)
+		if createErr != nil {
+			return nil, createErr
+		}
+		return &Token{
+			AccessToken:  ts.AccessToken,
+			RefreshToken: ts.RefreshToken,
+		}, nil
+	}
+	return nil, err
+}

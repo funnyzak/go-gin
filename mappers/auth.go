@@ -10,3 +10,7 @@ type RegisterForm struct {
 	Password string  `form:"password" json:"password" binding:"required"`
 	Email    *string `form:"email" json:"email" binding:"omitempty,email"`
 }
+
+type Token struct {
+	RefreshToken string `form:"refresh_token" json:"refresh_token" binding:"required"`
+}
