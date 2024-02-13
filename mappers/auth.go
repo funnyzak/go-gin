@@ -6,7 +6,11 @@ type LoginForm struct {
 }
 
 type RegisterForm struct {
-	UserName string `form:"username" json:"username" binding:"required,username"`
-	Password string `form:"password" json:"password" binding:"required"`
-	Email    string `form:"email" json:"email" binding:"omitempty"`
+	UserName string  `form:"username" json:"username" binding:"required,max=30,min=5"`
+	Password string  `form:"password" json:"password" binding:"required"`
+	Email    *string `form:"email" json:"email" binding:"omitempty,email"`
+}
+
+type Token struct {
+	RefreshToken string `form:"refresh_token" json:"refresh_token" binding:"required"`
 }

@@ -2,6 +2,7 @@ package mygin
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -37,6 +38,16 @@ func RetrieveToken(c *gin.Context, tokenName string) (string, error) {
 	return "", fmt.Errorf("token not found")
 }
 
+// Extract the token from the request
+func RetrieveTokenFromAuthorization(r *http.Request) string {
+	bearToken := r.Header.Get("Authorization")
+	strArr := strings.Split(bearToken, " ")
+	if len(strArr) == 2 {
+		return strArr[1]
+	}
+	return ""
+}
+
 // MatchedPath returns the matched path of the request
 func RecordPath(c *gin.Context) {
 	url := c.Request.URL.String()
@@ -44,4 +55,12 @@ func RecordPath(c *gin.Context) {
 		url = strings.Replace(url, p.Value, ":"+p.Key, 1)
 	}
 	c.Set("MatchedPath", url)
+}
+
+func BindForm(c *gin.Context, isForm bool, form interface{}) error {
+	if isForm {
+		return c.ShouldBind(form)
+	} else {
+		return c.ShouldBindJSON(form)
+	}
 }

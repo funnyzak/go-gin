@@ -19,16 +19,24 @@ func (gp *guestPage) serve() {
 		IsPage:   true,
 		Msg:      "You are already logged in",
 		Btn:      "Return to home",
-		Redirect: singleton.Conf.Site.BaseURL,
+		Redirect: singleton.Conf.Site.BaseURL + "/user/profile",
 	}))
 	gr.GET("/register", gp.register)
 	gr.GET("/login", gp.login)
 }
 
 func (gp *guestPage) register(c *gin.Context) {
-	c.HTML(http.StatusOK, "register", gin.H{})
+	c.HTML(http.StatusOK, "register", gogin.CommonEnvironment(
+		c, gin.H{
+			"Title": "Register",
+		},
+	))
 }
 
 func (gp *guestPage) login(c *gin.Context) {
-	c.HTML(http.StatusOK, "login", gin.H{})
+	c.HTML(http.StatusOK, "login", gogin.CommonEnvironment(
+		c, gin.H{
+			"Title": "Login",
+		},
+	))
 }

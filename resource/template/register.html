@@ -1,5 +1,15 @@
-{{ define "login" }}
+{{ define "register" }}
 {{template "base/header" .}}
-注册
+    <form class="gogin-form" action="{{ .Conf.Site.BaseURL }}/api/register?page=1" method="post">
+        <h1>Go-Gin Register</h1>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email">
+        <input type="submit" value="Register">
+        <input type="button" value="Login" onclick="location.href='{{ .Conf.Site.BaseURL }}/login'">
+    </form>
 {{template "base/footer" .}}
 {{ end }}

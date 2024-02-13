@@ -3,8 +3,6 @@ package model
 import (
 	"fmt"
 	"go-gin/internal/gconfig"
-	"net/http"
-	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -35,7 +33,7 @@ type Auth struct{}
 // CreateToken by username
 func (m Auth) CreateToken(username string, conf *gconfig.Config) (*TokenDetails, error) {
 	td := &TokenDetails{}
-	td.AtExpires = time.Now().Add(time.Minute * time.Duration(conf.JWT.TokenExpiration)).Unix()
+	td.AtExpires = time.Now().Add(time.Minute * time.Duration(conf.JWT.AccessTokenExpiration)).Unix()
 	td.AccessUUID = uuid.NewV4().String()
 
 	td.RtExpires = time.Now().Add(time.Minute * time.Duration(conf.JWT.RefreshTokenExpiration)).Unix()
@@ -65,21 +63,10 @@ func (m Auth) CreateToken(username string, conf *gconfig.Config) (*TokenDetails,
 	return td, nil
 }
 
-// Extract the token from the request
-func (m Auth) ExtractTokenFromAuthorization(r *http.Request) string {
-	bearToken := r.Header.Get("Authorization")
-	strArr := strings.Split(bearToken, " ")
-	if len(strArr) == 2 {
-		return strArr[1]
-	}
-	return ""
-}
-
 // Verify the token from the request
-func (m Auth) VerifyToken(r *http.Request, conf *gconfig.Config) (*jwt.Token, error) {
-	tokenString := m.ExtractTokenFromAuthorization(r)
+func (m Auth) VerifyToken(tokenString string, conf *gconfig.Config) (*jwt.Token, error) {
 	if tokenString == "" {
-		return nil, fmt.Errorf("Can't find token from request")
+		return nil, fmt.Errorf("token not found")
 	}
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -94,20 +81,20 @@ func (m Auth) VerifyToken(r *http.Request, conf *gconfig.Config) (*jwt.Token, er
 }
 
 // TokenValid from the request
-func (m Auth) TokenValid(r *http.Request, conf *gconfig.Config) error {
-	token, err := m.VerifyToken(r, conf)
+func (m Auth) TokenValid(tokenString string, conf *gconfig.Config) error {
+	token, err := m.VerifyToken(tokenString, conf)
 	if err != nil {
 		return err
 	}
-	if _, ok := token.Claims.(jwt.Claims); !ok && !token.Valid {
+	if !token.Valid {
 		return err
 	}
 	return nil
 }
 
 // Get the token metadata from the request
-func (m Auth) ExtractTokenMetadata(r *http.Request, conf *gconfig.Config) (*AccessDetails, error) {
-	token, err := m.VerifyToken(r, conf)
+func (m Auth) ExtractTokenMetadata(tokenString string, conf *gconfig.Config) (*AccessDetails, error) {
+	token, err := m.VerifyToken(tokenString, conf)
 	if err != nil {
 		return nil, err
 	}
@@ -121,6 +108,42 @@ func (m Auth) ExtractTokenMetadata(r *http.Request, conf *gconfig.Config) (*Acce
 		return &AccessDetails{
 			AccessUUID: accessUUID,
 			UserName:   userName,
+		}, nil
+	}
+	return nil, err
+}
+
+func (m Auth) RefreshToken(refreshToken string, conf *gconfig.Config) (*Token, error) {
+	// Verify the token
+	token, err := jwt.Parse(refreshToken, func(token *jwt.Token) (interface{}, error) {
+		// Make sure that the token method conform to "SigningMethodHMAC"
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(conf.JWT.RefreshSecret), nil
+	})
+	// If there is an error, the token must have expired
+	if err != nil {
+		return nil, err
+	}
+	if !token.Valid {
+		return nil, err
+	}
+	// Since token is valid, get the uuid:
+	claims, ok := token.Claims.(jwt.MapClaims) // the token claims should conform to MapClaims
+	if ok && token.Valid {
+		userName := claims["user_id"].(string)
+		if userName == "" {
+			return nil, fmt.Errorf("user_id not found")
+		}
+		// Create new pairs of refresh and access tokens
+		ts, createErr := m.CreateToken(userName, conf)
+		if createErr != nil {
+			return nil, createErr
+		}
+		return &Token{
+			AccessToken:  ts.AccessToken,
+			RefreshToken: ts.RefreshToken,
 		}, nil
 	}
 	return nil, err

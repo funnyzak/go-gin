@@ -2,12 +2,12 @@
 .idea
 
 *.sqlite3
+*.sqlite
 
-/db
+db/
 logs/
 logs/*.log
 
-# Environments
 config.env
 .env
 .venv

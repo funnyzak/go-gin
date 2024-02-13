@@ -1,0 +1,16 @@
+{{ define "user/post" }}
+{{template "base/header" .}}
+  <form class="gogin-form">
+      <h1>Post Message</h1>
+      <label for="title">title</label>
+      <input type="text" id="title" name="title">
+      <label for="author">author</label>
+      <input type="text" id="author" name="author">
+      <label for="content">content</label>
+      <textarea id="content" name="content">
+      <input type="submit" value="Login">
+      <input type="button" value="Register" onclick="location.href='{{ .Conf.Site.BaseURL }}/register'">
+      <input type="button" value="Back to home" onclick="location.href='{{ .Conf.Site.BaseURL }}/'">
+  </form>
+{{template "base/footer" .}}
+{{ end }}
