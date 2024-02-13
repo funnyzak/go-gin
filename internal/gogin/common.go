@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"go-gin/model"
 	"go-gin/pkg/mygin"
 	"go-gin/service/singleton"
 )
@@ -14,6 +15,9 @@ func CommonEnvironment(c *gin.Context, data map[string]interface{}) gin.H {
 	data["MatchedPath"] = c.MustGet("MatchedPath")
 	data["Version"] = singleton.Version
 	data["Conf"] = singleton.Conf
+	if val, ok := c.Get(model.CtxKeyAuthorizedUser); ok {
+		data["User"] = val
+	}
 	if t, has := data["Title"]; !has {
 		data["Title"] = singleton.Conf.Site.Brand
 	} else {

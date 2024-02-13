@@ -14,7 +14,7 @@ type Post struct {
 	CreatedUser uint64 `json:"created_user,omitempty" gorm:"column:created_user"`
 }
 
-func (p Post) Create(form mappers.PostForm, db *gorm.DB) (err error) {
+func (p *Post) Create(form mappers.PostForm, db *gorm.DB) (err error) {
 	p.Title = form.Title
 	p.Content = form.Content
 	p.CreatedUser = form.CreatedUser
@@ -22,7 +22,7 @@ func (p Post) Create(form mappers.PostForm, db *gorm.DB) (err error) {
 	return err
 }
 
-func (p Post) Update(form mappers.PostForm, db *gorm.DB) (err error) {
+func (p *Post) Update(form mappers.PostForm, db *gorm.DB) (err error) {
 	if form.ID == 0 {
 		return err
 	}
@@ -33,17 +33,17 @@ func (p Post) Update(form mappers.PostForm, db *gorm.DB) (err error) {
 	return err
 }
 
-func (p Post) Delete(id int, db *gorm.DB) (err error) {
+func (p *Post) Delete(id int, db *gorm.DB) (err error) {
 	err = db.Model(&Post{}).Where("id = ?", id).Delete(&p).Error
 	return err
 }
 
-func (p Post) Get(id int, db *gorm.DB) (post Post, err error) {
+func (p *Post) Get(id int, db *gorm.DB) (post Post, err error) {
 	err = db.Model(&Post{}).Where("id = ?", id).First(&post).Error
 	return post, err
 }
 
-func (p Post) List(db *gorm.DB, where ...interface{}) (posts []Post, err error) {
+func (p *Post) List(db *gorm.DB, where ...interface{}) (posts []Post, err error) {
 	err = db.Model(&Post{}).Where(where).Find(&posts).Error
 	return posts, err
 }

@@ -30,7 +30,7 @@ type User struct {
 
 var auth = new(Auth)
 
-func (u User) Login(form mappers.LoginForm, db *gorm.DB, conf *gconfig.Config) (token *TokenDetails, err error) {
+func (u *User) Login(form mappers.LoginForm, db *gorm.DB, conf *gconfig.Config) (token *TokenDetails, err error) {
 
 	db.Model(&User{}).Where("username = ?", form.UserName).First(&u)
 
@@ -46,7 +46,7 @@ func (u User) Login(form mappers.LoginForm, db *gorm.DB, conf *gconfig.Config) (
 	return auth.CreateToken(u.UserName, conf)
 }
 
-func (u User) Register(form mappers.RegisterForm, db *gorm.DB, conf *gconfig.Config) (err error) {
+func (u *User) Register(form mappers.RegisterForm, db *gorm.DB, conf *gconfig.Config) (err error) {
 	err = db.Model(&User{}).Where("username = ?", form.UserName).First(&u).Error
 	if err == nil {
 		return errors.New("username already exists")
@@ -67,27 +67,27 @@ func (u User) Register(form mappers.RegisterForm, db *gorm.DB, conf *gconfig.Con
 	return err
 }
 
-func (u User) GetByUsername(username string, db *gorm.DB) (err error) {
+func (u *User) GetByUsername(username string, db *gorm.DB) (err error) {
 	err = db.Model(&User{}).Where("username = ?", username).First(&u).Error
 	return err
 }
 
-func (u User) GetByEmail(email string, db *gorm.DB) (err error) {
+func (u *User) GetByEmail(email string, db *gorm.DB) (err error) {
 	err = db.Model(&User{}).Where("email = ?", email).First(&u).Error
 	return err
 }
 
-func (u User) GetByVerificationCode(verificationCode string, db *gorm.DB) (err error) {
+func (u *User) GetByVerificationCode(verificationCode string, db *gorm.DB) (err error) {
 	err = db.Model(&User{}).Where("verification_code = ?", verificationCode).First(&u).Error
 	return err
 }
 
-func (u User) GetByForgotPasswordCode(forgotPasswordCode string, db *gorm.DB) (err error) {
+func (u *User) GetByForgotPasswordCode(forgotPasswordCode string, db *gorm.DB) (err error) {
 	err = db.Model(&User{}).Where("forgot_password_code = ?", forgotPasswordCode).First(&u).Error
 	return err
 }
 
-func (u User) UpdateVerificationCode(username string, db *gorm.DB) (err error) {
+func (u *User) UpdateVerificationCode(username string, db *gorm.DB) (err error) {
 	err = db.Model(&User{}).Where("username = ?", username).First(&u).Error
 	if err != nil {
 		return err
@@ -98,7 +98,7 @@ func (u User) UpdateVerificationCode(username string, db *gorm.DB) (err error) {
 	return err
 }
 
-func (u User) UpdateForgotPasswordCode(username string, db *gorm.DB) (err error) {
+func (u *User) UpdateForgotPasswordCode(username string, db *gorm.DB) (err error) {
 	err = db.Model(&User{}).Where("username = ?", username).First(&u).Error
 	if err != nil {
 		return err
@@ -109,7 +109,7 @@ func (u User) UpdateForgotPasswordCode(username string, db *gorm.DB) (err error)
 	return err
 }
 
-func (u User) UpdatePassword(username string, password string, db *gorm.DB) (err error) {
+func (u *User) UpdatePassword(username string, password string, db *gorm.DB) (err error) {
 	err = db.Model(&User{}).Where("username = ?", username).First(&u).Error
 	if err != nil {
 		return err
@@ -126,7 +126,7 @@ func (u User) UpdatePassword(username string, password string, db *gorm.DB) (err
 	return err
 }
 
-func (u User) UpdateEmail(username string, email *string, db *gorm.DB) (err error) {
+func (u *User) UpdateEmail(username string, email *string, db *gorm.DB) (err error) {
 	err = db.Model(&User{}).Where("username = ?", username).First(&u).Error
 	if err != nil {
 		return err
@@ -137,7 +137,7 @@ func (u User) UpdateEmail(username string, email *string, db *gorm.DB) (err erro
 	return err
 }
 
-func (u User) UpdateAvatarURL(username string, avatarURL *string, db *gorm.DB) (err error) {
+func (u *User) UpdateAvatarURL(username string, avatarURL *string, db *gorm.DB) (err error) {
 	err = db.Model(&User{}).Where("username = ?", username).First(&u).Error
 	if err != nil {
 		return err

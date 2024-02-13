@@ -1,7 +1,7 @@
 {{ define "user/profile" }}
 {{template "base/header" .}}
   <div class="profile-header">
-      <h1>用户名: User123</h1>
+      <h1>用户名: {{ .User.UserName }}</h1>
       <div>
           <button>注销登录</button>
           <button>发布Post</button>

@@ -37,6 +37,18 @@ func (v *apiV1) serve() {
 	}
 }
 
+func (v *apiV1) logout(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"message": "logout",
+	})
+}
+
+func (v *apiV1) refresh(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"message": "refresh",
+	})
+}
+
 func (v *apiV1) putPost(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "post",
@@ -70,17 +82,5 @@ func (v *apiV1) getPosts(c *gin.Context) {
 func (v *apiV1) getUserInfo(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "user info",
-	})
-}
-
-func (v *apiV1) logout(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "logout",
-	})
-}
-
-func (v *apiV1) refresh(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "refresh",
 	})
 }
