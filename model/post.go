@@ -8,7 +8,6 @@ import (
 
 type Post struct {
 	Common
-
 	Title       string `json:"title,omitempty" gorm:"column:title"`
 	Content     string `json:"content,omitempty" gorm:"column:content"`
 	CreatedUser uint64 `json:"created_user,omitempty" gorm:"column:created_user"`

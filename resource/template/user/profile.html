@@ -1,19 +1,21 @@
 {{ define "user/profile" }}
 {{template "base/header" .}}
   <div class="profile-header">
-      <h1>用户名: {{ .User.UserName }}</h1>
+      <h1>User: {{ .User.UserName }}</h1>
       <div>
-          <button onclick="location.href='{{ .Conf.Site.BaseURL }}/api/v1/user/logout?page=1'">注销登录</button>
-          <button onclick="location.href='{{ .Conf.Site.BaseURL}}/user/post'">发布Post</button>
+          <button onclick="location.href='{{ .Conf.Site.BaseURL }}/api/v1/user/logout?page=1'">Logout</button>
+          <button onclick="location.href='{{ .Conf.Site.BaseURL}}/user/post'">Post</button>
       </div>
   </div>
-
+  <!--foreach Posts-->
+  {{ range .Posts }}
   <div class="one-post">
-      <h2>Post Title 1</h2>
-      <p>发布时间: 2024-02-09 19:03:29</p>
-      <button>删除</button>
-      <button>编辑</button>
-      <button>分享</button>
+      <h2>{{ .Title }}</h2>
+      <p>CreatedAt: {{ .CreatedAt | tsf }}</p>
+      <button>Del</button>
+      <button>Edit</button>
+      <button>Detail</button>
   </div>
+  {{ end }}
 {{template "base/footer" .}}
 {{ end }}

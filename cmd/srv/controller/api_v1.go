@@ -27,14 +27,14 @@ func (v *apiV1) serve() {
 		Redirect: fmt.Sprintf("%s/login", singleton.Conf.Site.BaseURL),
 	}))
 
+	r.POST("/post", v.putPost)
+	r.POST("/post/:id", v.postPost)
+	r.GET("/post/:id", v.getPost)
+	r.DELETE("/post/:id", v.deletePost)
+	r.GET("/posts", v.getPosts)
+
 	user := v.r.Group("user")
 	{
-		r.PUT("/post", v.putPost)
-		r.POST("/post", v.postPost)
-		r.GET("/post/:id", v.getPost)
-		r.DELETE("/post/:id", v.deletePost)
-		r.GET("/posts", v.getPosts)
-
 		user.GET("/info", v.getUserInfo)
 		user.GET("/logout", v.logout)
 		user.GET("/refresh", v.refresh)
@@ -68,9 +68,40 @@ func (v *apiV1) refresh(c *gin.Context) {
 }
 
 func (v *apiV1) putPost(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "post",
-	})
+	var postForm mappers.PostForm
+	isForm := utils.ParseBool(c.Query("form"), false)
+	if err := mygin.BindForm(c, isForm, &postForm); err != nil {
+		gogin.ShowErrorPage(c, mygin.ErrInfo{
+			Code: 400,
+			Msg:  "post is required",
+			Btn:  "Back",
+			Link: "/",
+		}, isForm)
+		return
+	}
+	if postForm.CreatedUser == 0 {
+		user, _ := gogin.GetCurrentUser(c)
+		postForm.CreatedUser = user.ID
+	}
+	var post model.Post = model.Post{}
+	if err := post.Create(postForm, singleton.DB); err != nil {
+		gogin.ShowErrorPage(c, mygin.ErrInfo{
+			Code: 400,
+			Msg:  err.Error(),
+			Btn:  "Back",
+			Link: "/",
+		}, isForm)
+		return
+	}
+
+	if isForm {
+		gogin.ShowMessagePage(c, "Post success", fmt.Sprintf("/post/%d", post.ID), "View post")
+	} else {
+		mygin.ResponseJSON(c, 200,
+			gogin.CommonEnvironment(c, gin.H{
+				"post": post,
+			}), "post success")
+	}
 }
 
 func (v *apiV1) postPost(c *gin.Context) {

@@ -1,14 +1,12 @@
 {{ define "user/post" }}
 {{template "base/header" .}}
-  <form class="gogin-form">
+  <form class="gogin-form" style="width:500px" action="{{ .Conf.Site.BaseURL }}/api/v1/post?form=1" method="post">
       <h1>Post Message</h1>
       <label for="title">title</label>
-      <input type="text" id="title" name="title" required placeholder="title"/>
-      <label for="author">author</label>
-      <input type="text" id="author" name="author" required placeholder="author"/>
+      <input type="text" id="title" name="title" placeholder="title" required>
       <label for="content">content</label>
-      <textarea id="content" name="content" required placeholder="message"></textarea>
-      <input type="submit" value="Login">
+      <textarea id="content" name="content" placeholder="message" rows="5"></textarea>
+      <input type="submit" value="Submit">
   </form>
 {{template "base/footer" .}}
 {{ end }}

@@ -26,6 +26,15 @@ func CommonEnvironment(c *gin.Context, data map[string]interface{}) gin.H {
 	return data
 }
 
+func GetCurrentUser(c *gin.Context) (user model.User, err error) {
+	val, ok := c.Get(model.CtxKeyAuthorizedUser)
+	if !ok {
+		return user, fmt.Errorf("user not found")
+	}
+	user = val.(model.User)
+	return user, nil
+}
+
 func ShowErrorPage(c *gin.Context, i mygin.ErrInfo, isPage bool) {
 	if isPage {
 		c.HTML(i.Code, "error", CommonEnvironment(c, gin.H{
@@ -46,9 +55,9 @@ func ShowErrorPage(c *gin.Context, i mygin.ErrInfo, isPage bool) {
 
 func ShowMessagePage(c *gin.Context, msg, link, btn string) {
 	c.HTML(http.StatusOK, "message", CommonEnvironment(c, gin.H{
-		"Msg":   msg,
-		"Link":  link,
-		"Btn":   btn,
+		"Msg":  msg,
+		"Link": link,
+		"Btn":  btn,
 	}))
 	c.Abort()
 }

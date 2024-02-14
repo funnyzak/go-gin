@@ -19,6 +19,9 @@ var FuncMap = template.FuncMap{
 	"tf": func(t time.Time) string {
 		return t.Format("01/02/2006 15:04:05")
 	},
+	"tsf": func(ts int64) string {
+		return time.Unix(int64(ts/1000), 0).Format("01/02/2006 15:04:05")
+	},
 	"len": func(slice []interface{}) string {
 		return strconv.Itoa(len(slice))
 	},
