@@ -43,6 +43,10 @@ func (p *Post) Get(id int, db *gorm.DB) (post Post, err error) {
 }
 
 func (p *Post) List(db *gorm.DB, where ...interface{}) (posts []Post, err error) {
+	if len(where) == 0 {
+		err = db.Model(&Post{}).Find(&posts).Error
+		return posts, err
+	}
 	err = db.Model(&Post{}).Where(where).Find(&posts).Error
 	return posts, err
 }

@@ -2,7 +2,6 @@ package controller
 
 import (
 	"go-gin/internal/gogin"
-	"go-gin/model"
 	"go-gin/service/singleton"
 	"net/http"
 
@@ -12,8 +11,6 @@ import (
 type userPage struct {
 	r *gin.Engine
 }
-
-var postModel = model.Post{}
 
 func (up *userPage) serve() {
 	gr := up.r.Group("")
@@ -27,7 +24,6 @@ func (up *userPage) serve() {
 		},
 	))
 	gr.GET("/user/profile", up.userPage)
-	gr.GET("/user/post", up.userPost)
 }
 
 func (sp *userPage) userPage(c *gin.Context) {
@@ -36,8 +32,4 @@ func (sp *userPage) userPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "user/profile", gogin.CommonEnvironment(c, gin.H{
 		"Posts": posts,
 	}))
-}
-
-func (sp *userPage) userPost(c *gin.Context) {
-	c.HTML(http.StatusOK, "user/post", gogin.CommonEnvironment(c, gin.H{}))
 }

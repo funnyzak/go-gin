@@ -27,11 +27,10 @@ func (v *apiV1) serve() {
 		Redirect: fmt.Sprintf("%s/login", singleton.Conf.Site.BaseURL),
 	}))
 
-	r.POST("/post", v.putPost)
-	r.POST("/post/:id", v.postPost)
-	r.GET("/post/:id", v.getPost)
-	r.DELETE("/post/:id", v.deletePost)
-	r.GET("/posts", v.getPosts)
+	r.POST("/post", v.postPost)         // create post
+	r.GET("/post/:id", v.getPost)       // get post
+	r.DELETE("/post/:id", v.deletePost) // delete post
+	r.GET("/posts", v.getPosts)         // get posts
 
 	user := v.r.Group("user")
 	{
@@ -67,7 +66,7 @@ func (v *apiV1) refresh(c *gin.Context) {
 	mygin.ResponseJSON(c, 200, tk, "refresh success")
 }
 
-func (v *apiV1) putPost(c *gin.Context) {
+func (v *apiV1) postPost(c *gin.Context) {
 	var postForm mappers.PostForm
 	isForm := utils.ParseBool(c.Query("form"), false)
 	if err := mygin.BindForm(c, isForm, &postForm); err != nil {
@@ -104,12 +103,6 @@ func (v *apiV1) putPost(c *gin.Context) {
 	}
 }
 
-func (v *apiV1) postPost(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "post",
-	})
-}
-
 func (v *apiV1) getPost(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "post",
@@ -123,9 +116,10 @@ func (v *apiV1) deletePost(c *gin.Context) {
 }
 
 func (v *apiV1) getPosts(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "posts",
-	})
+	posts, _ := postModel.List(singleton.DB, "")
+	mygin.ResponseJSON(c, 200, gogin.CommonEnvironment(c, gin.H{
+		"Posts": posts,
+	}))
 }
 
 func (v *apiV1) getUserInfo(c *gin.Context) {

@@ -7,14 +7,13 @@
           <button onclick="location.href='{{ .Conf.Site.BaseURL}}/user/post'">Post</button>
       </div>
   </div>
-  <!--foreach Posts-->
   {{ range .Posts }}
   <div class="one-post">
       <h2>{{ .Title }}</h2>
       <p>CreatedAt: {{ .CreatedAt | tsf }}</p>
       <button>Del</button>
       <button>Edit</button>
-      <button>Detail</button>
+      <button onclick="location">Detail</button>
   </div>
   {{ end }}
 {{template "base/footer" .}}
