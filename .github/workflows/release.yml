@@ -59,14 +59,14 @@ jobs:
 
       - name: Zip artifacts
         run: |
-          for dir in  ${{ needs.setup.outputs.REPO_NAME }}*; do
+          for dir in  ${{ needs.setup.outputs.REPO_NAME }}-*; do
             if [ -d "$dir" ]; then
               echo "----- Zip $dir -----"
               (cd $dir && zip -r9 "../${dir}-${{ needs.setup.outputs.TAG_NAME }}.zip" ./*)
             fi
           done
 
-          sha256sum  ${{ needs.setup.outputs.REPO_NAME }}*.zip > ${{ needs.setup.outputs.REPO_NAME }}-${{ needs.setup.outputs.TAG_NAME }}-sha256sum.txt
+          sha256sum  ${{ needs.setup.outputs.REPO_NAME }}-*.zip > ${{ needs.setup.outputs.REPO_NAME }}-${{ needs.setup.outputs.TAG_NAME }}-sha256sum.txt
 
           echo "----- Display release files -----"
           ls -R | grep -E 'zip|sha256sum'
@@ -75,7 +75,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ${{ needs.setup.outputs.REPO_NAME }}*.zip
+            ${{ needs.setup.outputs.REPO_NAME }}-*.zip
             ${{ needs.setup.outputs.REPO_NAME }}-${{ needs.setup.outputs.TAG_NAME }}-sha256sum.txt
           draft: true
           generate_release_notes: true
