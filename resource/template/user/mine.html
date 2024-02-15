@@ -1,7 +1,7 @@
 {{ define "user/mine" }}
 {{template "base/header" .}}
   <div class="profile-header">
-      <h1>User: {{ .User.UserName }}</h1>
+      <h1>Name: {{ .User.UserName }}</h1>
       <div>
           <button onclick="location.href='{{ .Conf.Site.BaseURL }}/api/v1/user/logout?page=1'">Logout</button>
           <button onclick="location.href='{{ .Conf.Site.BaseURL }}/user/post'">Post</button>
