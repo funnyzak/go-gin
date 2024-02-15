@@ -1,0 +1,15 @@
+{{ define "message" }}
+{{template "base/header" .}}
+<style>
+  .container {
+    max-width: 600px;
+    margin: 100px auto;
+    text-align: center;
+  }
+  </style>
+  <div class="container">
+    <p>{{ .Msg }}</p>
+    <a href="{{ .Link }}">{{ .Btn }}</a>
+  </div>
+{{template "base/footer" .}}
+{{ end }}

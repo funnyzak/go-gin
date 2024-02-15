@@ -1,0 +1,9 @@
+{{ define "post/detail" }}
+{{template "base/header" .}}
+  <div class="post-detail">
+      <h1>{{ .Post.Title }}</h1>
+      <p>CreatedAt: {{ .Post.CreatedAt | tsf }}</p>
+      {{ .Post.Content | text2html }}
+  </div>
+{{template "base/footer" .}}
+{{ end }}

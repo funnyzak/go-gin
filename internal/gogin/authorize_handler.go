@@ -23,11 +23,29 @@ type AuthorizeOption struct {
 
 var auth = model.Auth{}
 
+func getUserFromToken(token string, c *gin.Context) (model.User, bool) {
+	var u model.User
+	tokenDetail, err := auth.ExtractTokenMetadata(token, singleton.Conf)
+	if err != nil {
+		singleton.Log.Err(err).Msgf("ExtractTokenMetadata: %v", err)
+		return u, false
+	}
+
+	err = u.GetByUsername(tokenDetail.UserName, singleton.DB)
+	if err != nil {
+		singleton.Log.Err(err).Msgf("GetByUsername: %v", err)
+		return u, false
+	}
+
+	c.Set(model.CtxKeyAuthorizedUser, u)
+	return u, true
+}
+
 func Authorize(opt AuthorizeOption) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var code = http.StatusForbidden
 
-		rltErr := mygin.ErrInfo{
+		unauthorizedErr := mygin.ErrInfo{
 			Title: "Unauthorized",
 			Code:  code,
 			Msg:   opt.Msg,
@@ -36,54 +54,42 @@ func Authorize(opt AuthorizeOption) gin.HandlerFunc {
 		}
 		var isLogin bool = false
 
-		token, _ := c.Cookie(singleton.Conf.Site.CookieName)
+		token, _ := c.Cookie(singleton.Conf.JWT.AccessTokenCookieName)
 		token = strings.TrimSpace(token)
 		if token != "" {
-			var u model.User = model.User{}
-			tokenDetail, err := auth.ExtractTokenMetadata(token, singleton.Conf)
-			if err != nil {
-				singleton.Log.Err(err).Msgf("ExtractTokenMetadata: %v", err)
-			} else {
-				err = u.GetByUsername(tokenDetail.UserName, singleton.DB)
-				if err != nil {
-					singleton.Log.Err(err).Msgf("GetByUsername: %v", err)
-				} else {
-					c.Set(model.CtxKeyAuthorizedUser, u)
-					isLogin = true
+			_, isLogin = getUserFromToken(token, c)
+			if !isLogin {
+				refreshToken, _ := c.Cookie(singleton.Conf.JWT.RefreshTokenCookieName)
+				if refreshToken != "" {
+					newToken, err := auth.RefreshToken(refreshToken, singleton.Conf)
+					if err != nil {
+						singleton.Log.Err(err).Msgf("RefreshToken: %v", err)
+						ShowErrorPage(c, unauthorizedErr, opt.IsPage)
+						return
+					}
+
+					UserLoginSuccess(c, newToken)
+					token = newToken.AccessToken
+					_, isLogin = getUserFromToken(token, c)
 				}
 			}
 		}
 
-		if opt.AllowAPI {
+		if opt.AllowAPI && !isLogin {
 			c.Set("isAPI", true)
-
-			if !isLogin {
-				apiToken := mygin.RetrieveTokenFromAuthorization(c.Request)
-				if apiToken != "" {
-					var u model.User = model.User{}
-					tokenDetail, err := auth.ExtractTokenMetadata(apiToken, singleton.Conf)
-					if err != nil {
-						singleton.Log.Err(err).Msgf("ExtractTokenMetadata: %v", err)
-					} else {
-						err = u.GetByUsername(tokenDetail.UserName, singleton.DB)
-						if err != nil {
-							singleton.Log.Err(err).Msgf("GetByUsername: %v", err)
-						} else {
-							c.Set(model.CtxKeyAuthorizedUser, u)
-							isLogin = true
-						}
-					}
-				}
+			apiToken := mygin.RetrieveTokenFromAuthorization(c.Request)
+			if apiToken != "" {
+				_, isLogin = getUserFromToken(apiToken, c)
 			}
 		}
 
 		if opt.Guest && isLogin {
-			ShowErrorPage(c, rltErr, opt.IsPage)
+			ShowErrorPage(c, unauthorizedErr, opt.IsPage)
 			return
 		}
 
 		if !isLogin && opt.User {
-			ShowErrorPage(c, rltErr, opt.IsPage)
+			ShowErrorPage(c, unauthorizedErr, opt.IsPage)
 			return
 		}
 

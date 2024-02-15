@@ -1,6 +1,6 @@
 # Go Gin
 
-Quick start web application using Go and Gin.
+Gin gonic starter with zerolog, viper, gorm, jwt basic setup.
 
 ## Development
 
@@ -32,6 +32,41 @@ If you want to develop with this project, you can follow the steps below.
 ### CI/CD
 
 You can click `Use this template` to create a new repository based on this project. and add Secrets Keys: `DOCKER_USERNAME` and `DOCKER_PASSWORD` in the repository settings. And when you push the code, it will automatically build binary and docker image and push to the Docker Hub.
+
+## Structure
+
+```plaintext
+├── Dockerfile              // Dockerfile defines how to build a Docker image for the project
+├── Makefile                // Contains commands for building, running, testing, etc. the project
+├── cmd
+│   ├── main.go             // The main entry point for the application
+│   └── srv                 // Server controller
+├── config.yaml.example     // An example configuration file for the project
+├── docker-compose.yml      // Defines services, networks and volumes for docker-compose
+├── internal
+│   ├── gconfig             // Internal package for configuration
+│   └── gogin               // Internal package for the gin framework
+├── mappers
+│   ├── auth.go             // Data mapper for authentication
+│   └── post.go             // Data mapper for posts
+├── model
+│   ├── auth.go             // Data model for authentication
+│   ├── common.go           // Common data models
+│   ├── post.go             // Data model for posts
+│   └── user.go             // Data model for users
+├── pkg
+│   ├── logger              // Package for logging
+│   ├── mygin               // Custom package for the gin framework
+│   └── utils               // Utility functions
+├── resource
+│   ├── resource.go         // Resource management
+│   ├── static              // Static files such as HTML, CSS, JavaScript, images
+│   └── template            // Templates for Gin framework
+├── script
+│   └── build.sh            // A script for building the project
+└── service
+    └── singleton           // Singleton services for the application
+```
 
 ## Build
 
@@ -98,23 +133,6 @@ You can pull the source code to compile the binary executable file yourself, or 
 ```
 
 **Note:** Please make sure that executable permissions have been set before running. If there are no executable permissions, you can set them through the `chmod +x go-gin` command.
-
-## Structure
-
-```plaintext
-├── Dockerfile
-├── Makefile
-├── cmd
-├── config.yaml.example
-├── docker-compose.yml
-├── go.mod
-├── go.sum
-├── internal
-├── model
-├── pkg
-├── resource
-└── script
-```
 
 ## License
 

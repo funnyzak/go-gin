@@ -54,8 +54,8 @@ func (ua *userAPI) login(c *gin.Context) {
 		showError(err)
 	} else {
 		if isPage {
-			c.SetCookie(singleton.Conf.Site.CookieName, token.AccessToken, 3600*24*7, "/", "", false, true)
-			c.Redirect(http.StatusFound, fmt.Sprintf("%s/user/profile", singleton.Conf.Site.BaseURL))
+			gogin.UserLoginSuccess(c, token)
+			c.Redirect(http.StatusFound, fmt.Sprintf("%s/user/mine", singleton.Conf.Site.BaseURL))
 		} else {
 			mygin.ResponseJSON(c, http.StatusOK, gin.H{
 				"token": token,

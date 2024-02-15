@@ -1,0 +1,10 @@
+{{ define "post/list" }}
+{{template "base/header" .}}
+  {{ range .Posts }}
+  <div class="one-post">
+      <h2>{{ .Title }}</h2>
+      <p>CreatedAt: {{ .CreatedAt | tsf }}</p>
+  </div>
+  {{ end }}
+{{template "base/footer" .}}
+{{ end }}
