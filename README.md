@@ -2,6 +2,13 @@
 
 Gin gonic starter with zerolog, viper, gorm, jwt basic setup.
 
+[![Build Status][build-status-image]][build-status]
+[![license][license-image]][repository-url]
+[![GitHub repo size][repo-size-image]][repository-url]
+[![docker][docker-image]][docker-url]
+[![tag][tag-image]][rle-url]
+[![release][rle-image]][rle-url]
+
 ## Development
 
 If you want to develop with this project, you can follow the steps below.
@@ -137,3 +144,23 @@ You can pull the source code to compile the binary executable file yourself, or 
 ## License
 
 MIT License
+
+[repo-size-image]: https://img.shields.io/github/repo-size/funnyzak/go-gin?style=flat-square&logo=github&logoColor=white&label=size
+[down-latest-image]: https://img.shields.io/github/downloads/funnyzak/go-gin/latest/total.svg
+[down-total-image]: https://img.shields.io/github/downloads/funnyzak/go-gin/total.svg
+[commit-activity-image]: https://img.shields.io/github/commit-activity/m/funnyzak/go-gin?style=flat-square
+[last-commit-image]: https://img.shields.io/github/last-commit/funnyzak/go-gin?style=flat-square
+[license-image]: https://img.shields.io/github/license/funnyzak/go-gin.svg?style=flat-square
+[repository-url]: https://github.com/funnyzak/go-gin
+[rle-url]: https://github.com/funnyzak/go-gin/releases/latest
+[rle-all-url]: https://github.com/funnyzak/go-gin/releases
+[ci-image]: https://img.shields.io/github/workflow/status/funnyzak/go-gin/react-native-android-build-apk
+[ci-url]: https://github.com/funnyzak/go-gin/actions
+[rle-image]: https://img.shields.io/github/release-date/funnyzak/go-gin.svg?style=flat-square&label=release
+[sg-image]: https://img.shields.io/badge/view%20on-Sourcegraph-brightgreen.svg?style=flat-square
+[sg-url]: https://sourcegraph.com/github.com/funnyzak/go-gin
+[build-status-image]: https://github.com/funnyzak/go-gin/actions/workflows/build.yml/badge.svg
+[build-status]: https://github.com/funnyzak/go-gin/actions
+[tag-image]: https://img.shields.io/github/tag/funnyzak/go-gin.svg
+[docker-image]: https://img.shields.io/docker/pulls/funnyzak/go-gin
+[docker-url]: https://hub.docker.com/r/funnyzak/go-gin
