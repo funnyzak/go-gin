@@ -23,14 +23,14 @@ func (up *userPage) serve() {
 			Btn:      "Login",
 		},
 	))
-	gr.GET("/user/profile", up.userPage)
+	gr.GET("/user/mine", up.userPage)
 	gr.GET("/user/post", up.userPost)
 }
 
 func (sp *userPage) userPage(c *gin.Context) {
 	user, _ := gogin.GetCurrentUser(c)
 	posts, _ := postModel.List(singleton.DB, "created_user = ?", user.ID)
-	c.HTML(http.StatusOK, "user/profile", gogin.CommonEnvironment(c, gin.H{
+	c.HTML(http.StatusOK, "user/mine", gogin.CommonEnvironment(c, gin.H{
 		"Posts": posts,
 	}))
 }
