@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"go-gin/cmd/srv/controller"
+	"go-gin/pkg/utils"
 	"go-gin/service/singleton"
 
 	"github.com/ory/graceful"
@@ -38,13 +40,14 @@ func main() {
 	srv := controller.ServerWeb(port)
 
 	if err := graceful.Graceful(func() error {
+		fmt.Printf(utils.Colorize("Server is running on port %d", utils.ColorGreen), port)
 		return srv.ListenAndServe()
 	}, func(c context.Context) error {
-		singleton.Log.Info().Msg("Graceful::START")
+		fmt.Print(utils.Colorize("Server is shutting down", utils.ColorRed))
 		srv.Shutdown(c)
 		return nil
 	}); err != nil {
-		singleton.Log.Err(err).Msg("Graceful::Error")
+		fmt.Println(utils.Colorize("Server is shutting down with error: %s", utils.ColorRed), err)
 	}
 
 }
