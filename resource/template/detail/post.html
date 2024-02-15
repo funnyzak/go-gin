@@ -3,7 +3,7 @@
   <div class="post-detail">
       <h1>{{ .Post.Title }}</h1>
       <p>CreatedAt: {{ .Post.CreatedAt | tsf }}</p>
-      <p>{{ .Post.Content }}</p>
+      {{ .Post.Content | text2html }}
   </div>
 {{template "base/footer" .}}
 {{ end }}

@@ -44,7 +44,7 @@ func (sp *showPage) postDetail(c *gin.Context) {
 }
 
 func (sp *showPage) postList(c *gin.Context) {
-	posts, _ := postModel.List(singleton.DB)
+	posts, _ := postModel.List(singleton.DB, "id > ?", 0)
 	c.HTML(http.StatusOK, "post/list", gogin.CommonEnvironment(c, gin.H{
 		"Posts": posts,
 	}))

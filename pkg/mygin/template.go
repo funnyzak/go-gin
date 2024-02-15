@@ -22,6 +22,10 @@ var FuncMap = template.FuncMap{
 	"tsf": func(ts int64) string {
 		return time.Unix(int64(ts/1000), 0).Format("01/02/2006 15:04:05")
 	},
+	"text2html": func(text string) template.HTML {
+		text = strings.Replace(text, "\n", "</p><p>", -1)
+		return template.HTML("<p>" + text + "</p>")
+	},
 	"len": func(slice []interface{}) string {
 		return strconv.Itoa(len(slice))
 	},
