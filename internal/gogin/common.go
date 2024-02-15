@@ -61,3 +61,13 @@ func ShowMessagePage(c *gin.Context, msg, link, btn string) {
 	}))
 	c.Abort()
 }
+
+func UserLoginSuccess(c *gin.Context, token *model.Token) {
+	c.SetCookie(singleton.Conf.JWT.AccessTokenCookieName, token.AccessToken, singleton.Conf.JWT.AccessTokenExpiration*60, "/", "", false, true)
+	c.SetCookie(singleton.Conf.JWT.RefreshTokenCookieName, token.RefreshToken, singleton.Conf.JWT.RefreshTokenExpiration*60, "/", "", false, true)
+}
+
+func UserLogout(c *gin.Context) {
+	c.SetCookie(singleton.Conf.JWT.AccessTokenCookieName, "", -1, "/", "", false, true)
+	c.SetCookie(singleton.Conf.JWT.RefreshTokenCookieName, "", -1, "/", "", false, true)
+}
