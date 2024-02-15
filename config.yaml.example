@@ -3,7 +3,7 @@ server:
 
 site:
   brand: Go-Gin
-  description: A simple web application using Go and Gin.
+  description: A simple web application using Go and Gin
   base_url: http://localhost:8080
 
 debug: true
@@ -26,6 +26,5 @@ jwt:
   refresh_secret: qhkxjrRmYcVYKSEobqsvhxhtPV3TWquu
   access_token_expiration: 60 # minutes
   refresh_token_expiration: 720 # minutes
-
-users:
-  user1: password1
+  access_token_cookie_name: go-gin-access
+  refresh_token_cookie_name: go-gin-refresh

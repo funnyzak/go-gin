@@ -35,5 +35,4 @@ type Config struct {
 		AccessTokenCookieName  string `mapstructure:"access_token_cookie_name"`
 		RefreshTokenCookieName string `mapstructure:"refresh_token_cookie_name"`
 	} `mapstructure:"jwt"`
-	Users map[string]string `mapstructure:"users"`
 }
