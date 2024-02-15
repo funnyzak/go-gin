@@ -7,6 +7,7 @@ Gin gonic starter with zerolog, viper, gorm, jwt basic setup.
 [![GitHub repo size][repo-size-image]][repository-url]
 [![docker][docker-image]][docker-url]
 [![tag][tag-image]][rle-url]
+[![release][rle-image]][rle-url]
 
 ## Development
 
