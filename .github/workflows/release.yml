@@ -9,6 +9,9 @@ on:
         description: 'Publish a specific version, enter a git tag.'
         required: true
 
+permissions:
+  contents: write
+
 jobs:
   setup:
     name: Setup
