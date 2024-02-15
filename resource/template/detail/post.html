@@ -2,7 +2,7 @@
 {{template "base/header" .}}
   <div class="post-detail">
       <h1>{{ .Post.Title }}</h1>
-      <p class="date">CreateAt: {{ .Post.CreateAt }}</p>
+      <p>CreatedAt: {{ .Post.CreatedAt | tsf }}</p>
       <p>{{ .Post.Content }}</p>
   </div>
 {{template "base/footer" .}}
