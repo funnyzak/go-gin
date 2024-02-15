@@ -36,5 +36,7 @@ func (sp *userPage) userPage(c *gin.Context) {
 }
 
 func (sp *userPage) userPost(c *gin.Context) {
-	c.HTML(http.StatusOK, "user/post", gogin.CommonEnvironment(c, gin.H{}))
+	c.HTML(http.StatusOK, "user/post", gogin.CommonEnvironment(c, gin.H{
+		"Title": "Post a new article",
+	}))
 }

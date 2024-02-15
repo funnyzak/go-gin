@@ -38,9 +38,10 @@ func (sp *showPage) postDetail(c *gin.Context) {
 			Code: http.StatusNotFound}, true)
 		return
 	}
-	c.HTML(http.StatusOK, "post/detail", gin.H{
-		"Post": post,
-	})
+	c.HTML(http.StatusOK, "post/detail", gogin.CommonEnvironment(c, gin.H{
+		"Title": post.Title,
+		"Post":  post,
+	}))
 }
 
 func (sp *showPage) postList(c *gin.Context) {
