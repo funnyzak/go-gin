@@ -22,7 +22,5 @@ func (p *commonPage) home(c *gin.Context) {
 }
 
 func (p *commonPage) ping(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "pong",
-	})
+	c.Writer.WriteString("pong")
 }
