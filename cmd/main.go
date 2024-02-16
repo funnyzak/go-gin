@@ -12,6 +12,7 @@ import (
 )
 
 type CliParam struct {
+	Version    bool   // Show version
 	ConfigName string // Config file name
 	Port       uint   // Server port
 }
@@ -20,17 +21,25 @@ var (
 	cliParam CliParam
 )
 
-func main() {
+func init() {
 	flag.CommandLine.ParseErrorsWhitelist.UnknownFlags = true
+	flag.BoolVarP(&cliParam.Version, "version", "v", false, "show version")
 	flag.StringVarP(&cliParam.ConfigName, "config", "c", "config", "config file name")
 	flag.UintVarP(&cliParam.Port, "port", "p", 0, "server port")
 	flag.Parse()
 	flag.Lookup("config").NoOptDefVal = "config"
-
 	singleton.InitConfig(cliParam.ConfigName)
 	singleton.InitLog(singleton.Conf)
+	singleton.InitTimezoneAndCache()
 	singleton.InitDBFromPath(singleton.Conf.DBPath)
 	initService()
+}
+
+func main() {
+	if cliParam.Version {
+		fmt.Println(singleton.Version)
+		return
+	}
 
 	port := singleton.Conf.Server.Port
 	if cliParam.Port != 0 {
@@ -69,5 +78,14 @@ func main() {
 }
 
 func initService() {
-	singleton.InitSingleton()
+	// Load all services in the singleton package
+	singleton.LoadSingleton()
+
+	if _, err := singleton.Cron.AddFunc("0 * * * * *", writeHello); err != nil {
+		panic(err)
+	}
+}
+
+func writeHello() {
+	singleton.Log.Info().Msg("Hello world, I am a cron task")
 }

@@ -1,6 +1,6 @@
 # Go Gin
 
-Gin gonic starter with zerolog, viper, gorm, jwt basic setup.
+Gin gonic starter with zerolog, viper, gorm, jwt basic, go-cache, cron basic configuration.
 
 [![Build Status][build-status-image]][build-status]
 [![license][license-image]][repository-url]

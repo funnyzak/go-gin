@@ -1,7 +1,8 @@
-package mygin
+package gogin
 
 import (
 	"fmt"
+	"go-gin/service/singleton"
 	"html/template"
 	"strconv"
 	"strings"
@@ -17,10 +18,10 @@ var FuncMap = template.FuncMap{
 		}
 	},
 	"tf": func(t time.Time) string {
-		return t.Format("01/02/2006 15:04:05")
+		return t.In(singleton.Loc).Format("01/02/2006 15:04:05")
 	},
 	"tsf": func(ts int64) string {
-		return time.Unix(int64(ts/1000), 0).Format("01/02/2006 15:04:05")
+		return time.Unix(int64(ts/1000), 0).In(singleton.Loc).Format("01/02/2006 15:04:05")
 	},
 	"text2html": func(text string) template.HTML {
 		text = strings.Replace(text, "\n", "</p><p>", -1)
@@ -36,7 +37,7 @@ var FuncMap = template.FuncMap{
 		return template.HTML(`<` + s + `>`) // #nosec
 	},
 	"stf": func(s uint64) string {
-		return time.Unix(int64(s), 0).Format("01/02/2006 15:04")
+		return time.Unix(int64(s), 0).In(singleton.Loc).Format("01/02/2006 15:04")
 	},
 	"sf": func(duration uint64) string {
 		return time.Duration(time.Duration(duration) * time.Second).String()
@@ -119,7 +120,7 @@ var FuncMap = template.FuncMap{
 	},
 	"dayBefore": func(i int) string {
 		year, month, day := time.Now().Date()
-		today := time.Date(year, month, day, 0, 0, 0, 0, time.Local)
+		today := time.Date(year, month, day, 0, 0, 0, 0, singleton.Loc)
 		return today.AddDate(0, 0, i-29).Format("01/02")
 	},
 	"className": func(percent float32) string {
