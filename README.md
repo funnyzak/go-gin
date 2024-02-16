@@ -1,6 +1,6 @@
 # Go Gin
 
-Gin gonic starter with zerolog, viper, gorm, jwt basic setup.
+Gin gonic starter with zerolog, viper, gorm, jwt basic, go-cache, cron basic configuration.
 
 [![Build Status][build-status-image]][build-status]
 [![license][license-image]][repository-url]
@@ -19,10 +19,10 @@ If you want to develop with this project, you can follow the steps below.
     git clone git@github.com:funnyzak/go-gin.git && cd go-gin
    ```
   
-2. Copy the `config.example.json` file to `config.json` and update the values.
+2. Copy the `config.yaml.example` file to `config.yaml` and update the values.
 
    ```bash
-    cp config.example.json config.json
+    cp config.yaml.example config.yaml
    ```
 
 3. Run the application.
@@ -38,7 +38,7 @@ If you want to develop with this project, you can follow the steps below.
 
 ### CI/CD
 
-You can click `Use this template` to create a new repository based on this project. and add Secrets Keys: `DOCKER_USERNAME` and `DOCKER_PASSWORD` in the repository settings. And when you push the code, it will automatically build binary and docker image and push to the Docker Hub.
+You can fork this repository and add Secrets Keys: `DOCKER_USERNAME` and `DOCKER_PASSWORD` in the repository settings. And when you push the code, it will automatically build binary and docker image and push to the Docker Hub.
 
 ## Structure
 

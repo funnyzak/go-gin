@@ -57,7 +57,7 @@ func serveStatic(r *gin.Engine) {
 
 // Load templates
 func loadTemplates(r *gin.Engine) {
-	new_tmpl := template.New("").Funcs(mygin.FuncMap)
+	new_tmpl := template.New("").Funcs(gogin.FuncMap)
 	var err error
 	new_tmpl, err = new_tmpl.ParseFS(resource.TemplateFS, "template/**/*.html", "template/*.html")
 	if err != nil {

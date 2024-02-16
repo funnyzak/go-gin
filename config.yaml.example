@@ -6,7 +6,7 @@ site:
   description: A simple web application using Go and Gin
   base_url: http://localhost:8080
 
-debug: true
+debug: false
 
 log:
   level: debug
@@ -28,3 +28,4 @@ jwt:
   refresh_token_expiration: 720 # minutes
   access_token_cookie_name: go-gin-access
   refresh_token_cookie_name: go-gin-refresh
+location: Asia/Chongqing # Timezone

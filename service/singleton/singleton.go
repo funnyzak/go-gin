@@ -3,8 +3,11 @@ package singleton
 import (
 	"fmt"
 	"os"
+	"time"
 
+	"github.com/patrickmn/go-cache"
 	"github.com/rs/zerolog"
+	"github.com/spf13/viper"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
@@ -17,22 +20,36 @@ import (
 var Version = "0.0.1"
 
 var (
-	Conf *gconfig.Config
-	Log  *zerolog.Logger
-	DB   *gorm.DB
+	ViperConf *viper.Viper    // Viper config for the application
+	Conf      *gconfig.Config // Global config for the application
+	Log       *zerolog.Logger // Global logger for the application
+	DB        *gorm.DB        // Global db for the application
+	Cache     *cache.Cache    // Global cache for the application
+	Loc       *time.Location  // Global location for the application
 )
 
-func InitSingleton() {
-	// TOO: init db
+func LoadSingleton() {
+	LoadCronTasks()
+	// TODO: Add your initialization code here, eg Service, Task, etc.
+}
+
+func InitTimezoneAndCache() {
+	var err error
+	Loc, err = time.LoadLocation(Conf.Location)
+	if err != nil {
+		panic(err)
+	}
+
+	Cache = cache.New(5*time.Minute, 10*time.Minute)
 }
 
 func InitConfig(name string) {
-	_config, err := utils.ReadViperConfig(name, "yaml", []string{".", "./config", "../"})
+	ViperConf, err := utils.ReadViperConfig(name, "yaml", []string{".", "./config", "../"})
 	if err != nil {
 		panic(fmt.Errorf("unable to read config: %s", err))
 	}
 
-	if err := _config.Unmarshal(&Conf); err != nil {
+	if err := ViperConf.Unmarshal(&Conf); err != nil {
 		panic(fmt.Errorf("unable to unmarshal config: %s", err))
 	}
 }
