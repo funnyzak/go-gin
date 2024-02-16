@@ -58,20 +58,21 @@ func Authorize(opt AuthorizeOption) gin.HandlerFunc {
 		token = strings.TrimSpace(token)
 		if token != "" {
 			_, isLogin = getUserFromToken(token, c)
-			if !isLogin {
-				refreshToken, _ := c.Cookie(singleton.Conf.JWT.RefreshTokenCookieName)
-				if refreshToken != "" {
-					newToken, err := auth.RefreshToken(refreshToken, singleton.Conf)
-					if err != nil {
-						singleton.Log.Err(err).Msgf("RefreshToken: %v", err)
-						ShowErrorPage(c, unauthorizedErr, opt.IsPage)
-						return
-					}
+		}
 
-					UserLoginSuccess(c, newToken)
-					token = newToken.AccessToken
-					_, isLogin = getUserFromToken(token, c)
+		if !isLogin {
+			refreshToken, err := c.Cookie(singleton.Conf.JWT.RefreshTokenCookieName)
+			if refreshToken != "" && err == nil {
+				newToken, err := auth.RefreshToken(refreshToken, singleton.Conf)
+				if err != nil {
+					singleton.Log.Err(err).Msgf("RefreshToken: %v", err)
+					ShowErrorPage(c, unauthorizedErr, opt.IsPage)
+					return
 				}
+
+				UserLoginSuccess(c, newToken)
+				token = newToken.AccessToken
+				_, isLogin = getUserFromToken(token, c)
 			}
 		}
 

@@ -22,4 +22,4 @@ deps:
 build:
 	@echo "Building binary..."
 	@bash ./script/build.sh $(build_args)
-	@echo "Binary built."
+	@echo "Binary built successfully."
