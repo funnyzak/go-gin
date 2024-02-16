@@ -2,6 +2,7 @@ package mygin
 
 import (
 	"fmt"
+	"go-gin/pkg/utils"
 	"net/http"
 	"strings"
 
@@ -62,5 +63,12 @@ func BindForm(c *gin.Context, isForm bool, form interface{}) error {
 		return c.ShouldBind(form)
 	} else {
 		return c.ShouldBindJSON(form)
+	}
+}
+
+func PrintRoute(r *gin.Engine) {
+	routes := r.Routes()
+	for _, route := range routes {
+		fmt.Printf(" - Route Path: %s, Method: %s\n", utils.Colorize(utils.ColorGreen, route.Path), utils.Colorize(utils.ColorGreen, route.Method))
 	}
 }

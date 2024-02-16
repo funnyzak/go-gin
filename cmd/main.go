@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"go-gin/cmd/srv/controller"
+	"go-gin/pkg/mygin"
 	"go-gin/pkg/utils"
 	"go-gin/service/singleton"
 
+	"github.com/gin-gonic/gin"
 	"github.com/ory/graceful"
 	flag "github.com/spf13/pflag"
 )
@@ -62,6 +64,10 @@ func main() {
 				fmt.Printf(" - %-7s: %s\n", "Network", utils.Colorize(utils.ColorGreen, fmt.Sprintf("http://%s:%d", ip, port)))
 			}
 		}
+
+		fmt.Println()
+		fmt.Println("Server available routes:")
+		mygin.PrintRoute(srv.Handler.(*gin.Engine))
 		fmt.Println()
 	}
 
