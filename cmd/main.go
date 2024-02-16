@@ -39,8 +39,25 @@ func main() {
 
 	srv := controller.ServerWeb(port)
 
+	startOutput := func() {
+		fmt.Println()
+		fmt.Println("Server is running with config:")
+		utils.PrintStructFieldsAndValues(singleton.Conf, "")
+
+		fmt.Println()
+		fmt.Println("Server is running at:")
+		ipv4s, err := utils.GetIPv4NetworkIPs()
+		if ipv4s != nil && err == nil {
+			for _, ip := range ipv4s {
+				fmt.Printf(" - %-20s: %s\n", "Network", utils.Colorize(utils.ColorGreen, fmt.Sprintf("http://%s:%d", ip, port)))
+			}
+		}
+		fmt.Println()
+	}
+
 	if err := graceful.Graceful(func() error {
-		fmt.Printf(utils.Colorize("Server is running on port %d", utils.ColorGreen), port)
+		startOutput()
+
 		return srv.ListenAndServe()
 	}, func(c context.Context) error {
 		fmt.Print(utils.Colorize("Server is shutting down", utils.ColorRed))
@@ -49,7 +66,6 @@ func main() {
 	}); err != nil {
 		fmt.Println(utils.Colorize("Server is shutting down with error: %s", utils.ColorRed), err)
 	}
-
 }
 
 func initService() {

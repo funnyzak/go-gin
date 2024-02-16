@@ -133,7 +133,7 @@ func GetNetworkIPs() ([]string, error) {
 	return ips, nil
 }
 
-func PrintStructFieldsAndValues(s interface{}, title string) error {
+func PrintStructFieldsAndValues(s interface{}, indent string) {
 	v := reflect.ValueOf(s)
 
 	if v.Kind() == reflect.Ptr {
@@ -141,23 +141,30 @@ func PrintStructFieldsAndValues(s interface{}, title string) error {
 	}
 
 	if v.Kind() != reflect.Struct {
-		return fmt.Errorf("PrintStructFieldsAndValues: %v is not a struct", v.Type())
+		fmt.Printf("%s%v is not a struct\n", indent, v.Type())
+		return
 	}
 
 	typeOfS := v.Type()
 
-	fmt.Println()
-	if title != "" {
-		fmt.Printf("%s\n", title)
-	}
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Field(i)
-		if field.CanInterface() {
-			fmt.Printf(" - %-20s: %v\n", typeOfS.Field(i).Name, Colorize(ColorGreen, fmt.Sprint(field.Interface())))
+		fmt.Printf("%s - %s: ", indent, typeOfS.Field(i).Name)
+
+		if field.Kind() == reflect.Struct {
+			fmt.Println()
+			PrintStructFieldsAndValues(field.Interface(), indent+"  ")
+		} else if field.Kind() == reflect.Ptr && field.Elem().Kind() == reflect.Struct {
+			fmt.Println()
+			PrintStructFieldsAndValues(field.Interface(), indent+"  ")
+		} else {
+			if field.CanInterface() {
+				fmt.Println(Colorize(ColorGreen, fmt.Sprint(field.Interface())))
+			} else {
+				fmt.Println()
+			}
 		}
 	}
-	fmt.Println()
-	return nil
 }
 
 func ParseBool(val string, defVal bool) bool {

@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/rs/zerolog"
+	"github.com/spf13/viper"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
@@ -17,9 +18,10 @@ import (
 var Version = "0.0.1"
 
 var (
-	Conf *gconfig.Config
-	Log  *zerolog.Logger
-	DB   *gorm.DB
+	ViperConf *viper.Viper
+	Conf      *gconfig.Config
+	Log       *zerolog.Logger
+	DB        *gorm.DB
 )
 
 func InitSingleton() {
@@ -27,12 +29,12 @@ func InitSingleton() {
 }
 
 func InitConfig(name string) {
-	_config, err := utils.ReadViperConfig(name, "yaml", []string{".", "./config", "../"})
+	ViperConf, err := utils.ReadViperConfig(name, "yaml", []string{".", "./config", "../"})
 	if err != nil {
 		panic(fmt.Errorf("unable to read config: %s", err))
 	}
 
-	if err := _config.Unmarshal(&Conf); err != nil {
+	if err := ViperConf.Unmarshal(&Conf); err != nil {
 		panic(fmt.Errorf("unable to unmarshal config: %s", err))
 	}
 }
