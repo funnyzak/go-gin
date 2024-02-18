@@ -80,6 +80,9 @@ jobs:
           files: |
             ${{ needs.setup.outputs.REPO_NAME }}-*.zip
             ${{ needs.setup.outputs.REPO_NAME }}-${{ needs.setup.outputs.TAG_NAME }}-sha256sum.txt
+            docker-compose.yml
+            Dockerfile
+            config.yaml.example
           draft: true
           generate_release_notes: true
         env:
