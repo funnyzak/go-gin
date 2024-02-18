@@ -87,11 +87,12 @@ func initService() {
 	// Load all services in the singleton package
 	singleton.LoadSingleton()
 
-	if _, err := singleton.Cron.AddFunc("0 * * * * *", writeHello); err != nil {
+	if _, err := singleton.Cron.AddFunc("0 * * * * *", sayHello); err != nil {
 		panic(err)
 	}
 }
 
-func writeHello() {
+func sayHello() {
 	singleton.Log.Info().Msg("Hello world, I am a cron task")
+	singleton.SendNotificationByType("wecom", "Hello world", "I am a cron task")
 }

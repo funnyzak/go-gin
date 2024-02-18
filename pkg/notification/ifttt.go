@@ -8,11 +8,8 @@ import (
 )
 
 type IFTTTPayload struct {
-	Key    string
-	Event  string
-	Value1 string
-	Value2 string
-	Value3 string
+	Key   string
+	Event string
 }
 
 type IFTTT struct {
@@ -22,15 +19,13 @@ type IFTTT struct {
 func (i IFTTT) Send(title string, message string) error {
 	key := i.Payload.Key
 	event := i.Payload.Event
-	value1 := i.Payload.Value1
-	value2 := i.Payload.Value2
-	value3 := i.Payload.Value3
+	value1 := title
+	value2 := message
 
 	sendMessageUrl := fmt.Sprintf("https://maker.ifttt.com/trigger/%s/with/key/%s", event, key)
 	sendMessageBody := map[string]string{
 		"value1": value1,
 		"value2": value2,
-		"value3": value3,
 	}
 	jsonBody, _ := json.Marshal(sendMessageBody)
 	resp, err := http.Post(sendMessageUrl, "application/json", bytes.NewBuffer(jsonBody))
