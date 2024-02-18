@@ -94,5 +94,5 @@ func initService() {
 
 func sayHello() {
 	singleton.Log.Info().Msg("Hello world, I am a cron task")
-	singleton.SendNotificationByType("wecom", "Hello world", "I am a cron task")
+	// singleton.SendNotificationByType("wecom", "Hello world", "I am a cron task")
 }
