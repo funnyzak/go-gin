@@ -10,6 +10,7 @@ on:
       - 'makefile'
       - 'config.yaml.example'
       - 'script/**'
+      - '.vscode/**'
   workflow_call:
     inputs:
       tags:

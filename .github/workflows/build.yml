@@ -11,6 +11,7 @@ on:
       - 'makefile'
       - 'config.yaml.example'
       - 'script/**'
+      - '.vscode/**'
   pull_request:
     paths-ignore:
       - 'README*'
@@ -21,6 +22,7 @@ on:
       - 'makefile'
       - 'config.yaml.example'
       - 'script/**'
+      - '.vscode/**'
   workflow_dispatch:
     inputs:
       tag:
