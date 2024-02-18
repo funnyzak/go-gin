@@ -30,7 +30,7 @@ var (
 
 func LoadSingleton() {
 	LoadCronTasks()
-	// TODO: Add your initialization code here, eg Service, Task, etc.
+	LoadNotifications()
 }
 
 func InitTimezoneAndCache() {
