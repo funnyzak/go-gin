@@ -46,14 +46,18 @@ notifications: # Notification settings
         event: "event-2"
   - type: smtp
     instances:
-      - server: "smtp-server-1"
+      - host: "smtp-host-1"
         port: 587
         username: "user-1"
         password: "password-1"
-      - server: "smtp-server-2"
+        from: "from-1"
+        to: "to-1"
+      - host: "smtp-host-2"
         port: 587
         username: "user-2"
         password: "password-2"
+        from: "from-2"
+        to: "to-2"
   - type: telegram
     instances:
       - botToken: "telegram-bot-token-1"

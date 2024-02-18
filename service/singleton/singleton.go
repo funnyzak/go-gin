@@ -30,6 +30,7 @@ var (
 
 func LoadSingleton() {
 	LoadCronTasks()
+	LoadNotifications()
 	// TODO: Add your initialization code here, eg Service, Task, etc.
 }
 

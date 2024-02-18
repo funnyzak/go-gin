@@ -9,7 +9,6 @@ import (
 
 type DingTalkPayload struct {
 	Webhook string
-	Message string
 }
 
 type DingTalk struct {

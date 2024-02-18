@@ -6,7 +6,7 @@ import (
 )
 
 type SMTPPayload struct {
-	Hostname  string
+	Host      string
 	Port      int
 	Security  bool
 	IgnoreTLS bool
@@ -23,13 +23,13 @@ type SMTP struct {
 }
 
 func (s *SMTP) Send(title string, message string) error {
-	auth := smtp.PlainAuth("", s.Payload.Username, s.Payload.Password, s.Payload.Hostname)
+	auth := smtp.PlainAuth("", s.Payload.Username, s.Payload.Password, s.Payload.Host)
 	to := []string{s.Payload.To}
 	msg := []byte("To: " + s.Payload.To + "\r\n" +
 		"Subject: " + title + "\r\n" +
 		"\r\n" +
 		message + "\r\n")
-	err := smtp.SendMail(s.Payload.Hostname+":"+strconv.Itoa(s.Payload.Port), auth, s.Payload.From, to, msg)
+	err := smtp.SendMail(s.Payload.Host+":"+strconv.Itoa(s.Payload.Port), auth, s.Payload.From, to, msg)
 	if err != nil {
 		return err
 	}
