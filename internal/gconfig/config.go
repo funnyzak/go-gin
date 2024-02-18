@@ -5,6 +5,11 @@ const (
 	DefaultPprofRoutePath = "/debug/pprof"
 )
 
+type Notification struct {
+	Type      string              `mapstructure:"type"`
+	Instances []map[string]string `mapstructure:"instances"`
+}
+
 type Config struct {
 	Server struct {
 		Port uint `mapstructure:"port"`
@@ -35,5 +40,6 @@ type Config struct {
 		AccessTokenCookieName  string `mapstructure:"access_token_cookie_name"`
 		RefreshTokenCookieName string `mapstructure:"refresh_token_cookie_name"`
 	} `mapstructure:"jwt"`
-	Location string `mapstructure:"location"`
+	Location      string         `mapstructure:"location"`
+	Notifications []Notification `mapstructure:"notifications"`
 }

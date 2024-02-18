@@ -9,23 +9,58 @@ site:
 debug: false
 
 log:
-  level: debug
-  path: logs/go-gin.log
+  level: debug # debug, info, warn, error, fatal, panic
+  path: logs/go-gin.log # Log file path
 
-db_path: db/go-gin.sqlite
+db_path: db/go-gin.sqlite # Database path
 
 rate_limit:
   max: 100 # requests per minute
 
 upload:
-  dir: upload
+  dir: upload # Upload directory
   max_size: 10485760 # 10MB
 
-jwt:
-  access_secret: qhkxjrRmYcVYKSEobqsvhxhtPVeTWquu
-  refresh_secret: qhkxjrRmYcVYKSEobqsvhxhtPV3TWquu
+jwt: # JWT settings
+  access_secret: qhkxjrRmYcVYKSEobqsvhxhtPVeTWquu # Access token secret
+  refresh_secret: qhkxjrRmYcVYKSEobqsvhxhtPV3TWquu # Refresh token secret
   access_token_expiration: 60 # minutes
   refresh_token_expiration: 720 # minutes
-  access_token_cookie_name: go-gin-access
-  refresh_token_cookie_name: go-gin-refresh
+  access_token_cookie_name: go-gin-access # Access token cookie name
+  refresh_token_cookie_name: go-gin-refresh # Refresh token cookie name
 location: Asia/Chongqing # Timezone
+notifications: # Notification settings
+  - type: apprise # You must install apprise first
+    instances:
+      - url: "apprise-url-1"
+      - url: "apprise-url-2"
+  - type: dingtalk
+    instances:
+      - webhook: "dingtalk-webhook-1"
+      - webhook: "dingtalk-webhook-2"
+  - type: ifttt
+    instances:
+      - key: "ifttt-key-1"
+        event: "event-1"
+      - key: "ifttt-key-2"
+        event: "event-2"
+  - type: smtp
+    instances:
+      - server: "smtp-server-1"
+        port: 587
+        username: "user-1"
+        password: "password-1"
+      - server: "smtp-server-2"
+        port: 587
+        username: "user-2"
+        password: "password-2"
+  - type: telegram
+    instances:
+      - botToken: "telegram-bot-token-1"
+        chatID: "chat-id-1"
+      - botToken: "telegram-bot-token-2"
+        chatID: "chat-id-2"
+  - type: wecom
+    instances:
+      - key: "wecom-key-1"
+      - key: "wecom-key-2"
