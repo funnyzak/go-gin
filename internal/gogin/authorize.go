@@ -12,7 +12,7 @@ import (
 )
 
 type AuthorizeOption struct {
-	User     bool // if true, only logged user can access
+	User     bool // if true, only logined user can access
 	Guest    bool // if true, only guest can access
 	IsPage   bool
 	AllowAPI bool // if true, allow API token
