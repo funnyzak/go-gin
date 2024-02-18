@@ -41,3 +41,49 @@ func LoadNotifications() {
 		}
 	}
 }
+
+// SendNotification sends a notification to all instances
+func SendNotification(title string, message string) {
+	for _, _notification := range Notifications {
+		for _, instance := range _notification {
+			switch _instance := instance.(type) {
+			case nn.Apprise:
+				_instance.Send(title, message)
+			case nn.DingTalk:
+				_instance.Send(title, message)
+			case nn.IFTTT:
+				_instance.Send(title, message)
+			case nn.Telegram:
+				_instance.Send(title, message)
+			case nn.WeCom:
+				_instance.Send(title, message)
+			case nn.SMTP:
+				_instance.Send(title, message)
+			default:
+				Log.Error().Msgf("Unknown notification instance: %v", _instance)
+			}
+		}
+	}
+}
+
+// SendNotificationByType sends a notification by type， e.g. "apprise", "dingtalk", "ifttt", "telegram", "wecom", "smtp"
+func SendNotificationByType(notificationType string, title string, message string) {
+	for _, instance := range Notifications[notificationType] {
+		switch _instance := instance.(type) {
+		case nn.Apprise:
+			_instance.Send(title, message)
+		case nn.DingTalk:
+			_instance.Send(title, message)
+		case nn.IFTTT:
+			_instance.Send(title, message)
+		case nn.Telegram:
+			_instance.Send(title, message)
+		case nn.WeCom:
+			_instance.Send(title, message)
+		case nn.SMTP:
+			_instance.Send(title, message)
+		default:
+			Log.Error().Msgf("Unknown notification instance: %v", _instance)
+		}
+	}
+}
