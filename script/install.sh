@@ -23,8 +23,8 @@ GG_REPO_BRANCH="installsrcipt" # service repo branch
 GG_SERVICE_NAME="${GG_NAME}" # service system name
 GG_WORK_PATH="/opt/${GG_SERVICE_NAME}" # service workdir path
 GG_SERVICE_PATH="${GG_WORK_PATH}/${GG_SERVICE_NAME}" # service app path
-GG_CONFIG_PATH="${GG_WORK_PATH}/config.yaml" # service config path
-GG_SERVICE_PATH="/etc/systemd/system/${GG_SERVICE_NAME}.service" # service path in systemd
+GG_CONFIG_PATH="${GG_WORK_PATH}/${GG_SERVICE_NAME}.yaml" # service config path
+GG_SYSTEMD_PATH="/etc/systemd/system/${GG_SERVICE_NAME}.service" # service path in systemd
 GG_RELEASES_DATA_URL="https://api.github.com/repos/${GG_REPO_NAME}/releases" # service releases data url for get latest version
 
 GG_LATEST_VERSION="" # service latest version
@@ -67,6 +67,7 @@ start_check() {
 
     GG_LATEST_VERSION_ZIP_NAME="${GG_SERVICE_NAME}-linux-${os_arch}-${GG_LATEST_VERSION}.zip"
     GG_LATEST_VERSION_DOWNLOAD_URL="https://github.com/${GG_REPO_NAME}/releases/download/${GG_LATEST_VERSION}/${GG_LATEST_VERSION_ZIP_NAME}"
+
 }
 
 ping_check() {
@@ -95,11 +96,37 @@ confirm() {
 
 execute_funcs() {
   for one_func in "$@"; do
-    if ! $one_func; then
-      echo -e "${red}ERROR${plain}: execute function list ${@} failed, failed function is ${one_func}."
+    echo -e "Execute function: ${green}${one_func}${plain}"
+    if [[ $one_func == *' '* ]]; then
+      eval $one_func
+    else
+      $one_func
+    fi
+    if [ $? -ne 0 ]; then
+      echo -e "${red}ERROR${plain}: execute function list ${@} failed, failed function is ${yellow}${one_func}${plain}."
       return 1
     fi
   done
+}
+
+install_service() {
+  echo -e "Install ${green}${GG_SERVICE_NAME}${plain} service..."
+  if service_exists; then
+    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service is already installed."
+    return 1
+  fi
+
+  execute_funcs "download_service_app" "download_service_template" "download_service_config" "enable_service 0" "start_service 0"
+  if [ $? -ne 0 ]; then
+    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service install failed."
+    return 1
+  fi
+
+  echo -e "${green}${GG_SERVICE_NAME}${plain} service for ${os_arch} install success. the latest version is ${GG_LATEST_VERSION}. Enjoy it!"
+
+  if [[ $# == 0 ]]; then
+    before_show_menu
+  fi
 }
 
 get_service_log_path() {
@@ -124,12 +151,19 @@ get_service_log_path() {
   fi
 
 }
+
 service_exists() {
-  if command -v systemctl >/dev/null 2>&1 && systemctl is-active --quiet ${GG_SERVICE_NAME}; then
-    # echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service is already installed."
+  if systemctl --all --type=service | grep -Fq "${GG_SERVICE_NAME}.service"; then
     return 0
   else
-    # echo -e "${green}${GG_SERVICE_NAME}${plain} service is not installed."
+    return 1
+  fi
+}
+
+service_active() {
+  if systemctl is-active --quiet ${GG_SERVICE_NAME}; then
+    return 0
+  else
     return 1
   fi
 }
@@ -140,23 +174,14 @@ service_action() {
 
   echo -e "${action} ${green}${GG_SERVICE_NAME}${plain} service..."
 
-  if ! service_exists; then
-    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service not installed. Please install it first."
-    if confirm "Do you want to install it now?"; then
-      install_service
-    else
-      return 1
-    fi
-  else
-    systemctl ${action} ${GG_SERVICE_NAME}
+  systemctl ${action} ${GG_SERVICE_NAME}
 
-    if [[ $? -ne 0 ]]; then
-      echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} ${action} failed."
-      return 1
-    fi
-
-    echo -e "${green}${GG_SERVICE_NAME}${plain} service ${action} success."
+  if [[ $? -ne 0 ]]; then
+    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} ${action} failed."
+    return 1
   fi
+
+  echo -e "${green}${GG_SERVICE_NAME}${plain} service ${action} success."
 
   if [[ $# == 0 ]]; then
     before_show_menu
@@ -169,17 +194,14 @@ create_service_workdir() {
   fi
 }
 
-install_service() {
-  echo -e "Install ${green}${GG_SERVICE_NAME}${plain} service..."
-
-  execute_funcs "service_exists" "download_service_app" "download_service_template" "download_service_config" "service_action enable" "service_action start"
+enable_service() {
+  echo -e "Enable ${green}${GG_SERVICE_NAME}${plain} service..."
+  systemctl enable ${GG_SERVICE_NAME}
   if [ $? -ne 0 ]; then
-    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service install failed."
+    echo -e "${red}ERROR${plain}: Enable ${GG_SERVICE_NAME} service failed."
     return 1
   fi
-
-  echo -e "${green}${GG_SERVICE_NAME}${plain} service for ${os_arch} install success. the latest version is ${GG_LATEST_VERSION}. Enjoy it!"
-
+  echo -e "${green}${GG_SERVICE_NAME}${plain} service enable success."
   if [[ $# == 0 ]]; then
     before_show_menu
   fi
@@ -191,6 +213,10 @@ start_service() {
 
 stop_service() {
   service_action stop $1
+}
+
+disable_service() {
+  service_action disable $1
 }
 
 restart_service() {
@@ -224,8 +250,10 @@ upgrade_service() {
 uninstall_service() {
   echo -e "Uninstall ${green}${GG_SERVICE_NAME}${plain} service..."
 
-  if service_exists && confirm "Do you want to uninstall ${GG_SERVICE_NAME} service?"; then
-    execute_funcs "service_action stop" "service_action disable"
+  if service_exists; then
+    execute_funcs "stop_service 0" "disable_service 0"
+    systemctl daemon-reload
+    rm -f ${GG_SYSTEMD_PATH}
     rm -f ${GG_SERVICE_PATH}
     rm -f ${GG_CONFIG_PATH}
     rm -rf ${GG_WORK_PATH}
@@ -245,7 +273,7 @@ uninstall_service() {
 show_service_log() {
   echo -e "Show ${green}${GG_SERVICE_NAME}${plain} service log..."
 
-  if ! service_exists || [ -z "$(get_service_log_path)" ]; then
+  if ! service_exists || [ -z "$(get_service_log_path)" ] || [ ! -f "$(get_service_log_path)" ]; then
     echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service log not found."
     return 1
   fi
@@ -297,7 +325,7 @@ download_service_config() {
 
 download_service_template() {
   create_service_workdir
-  download_file "${GG_RAW_URL}/script/${GG_SERVICE_NAME}.service" "${GG_SERVICE_PATH}"
+  download_file "${GG_RAW_URL}/script/${GG_SERVICE_NAME}.service" "${GG_SYSTEMD_PATH}"
   if [ $? -ne 0 ]; then
     return 1
   fi
@@ -312,11 +340,13 @@ download_service_app() {
   if [ -f "${GG_SERVICE_PATH}" ]; then
     rm -f ${GG_SERVICE_PATH}
   fi
+  echo -e "Unzip ${GG_LATEST_VERSION_ZIP_NAME} to ${GG_WORK_PATH}..."
   unzip -o /tmp/${GG_LATEST_VERSION_ZIP_NAME} -d ${GG_WORK_PATH} > /dev/null 2>&1
   if [ $? -ne 0 ]; then
     echo -e "${red}ERROR${plain}: Unzip ${GG_LATEST_VERSION_ZIP_NAME} failed."
     return 1
   fi
+  chmod +x ${GG_SERVICE_PATH}
 }
 
 get_service_version() {
@@ -331,6 +361,7 @@ get_service_version() {
 download_file() {
   local url=$1
   local file=$2
+  echo -e "Download ${url} to ${file}..."
   wget -t 3 -T 15 -O ${file} ${url} > /dev/null 2>&1
   if [ $? -ne 0 ]; then
     echo -e "${red}ERROR${plain}: Download ${url} failed."
@@ -355,6 +386,7 @@ show_usage() {
 show_menu() {
   echo -e ">
     ${green}${SCRIPT_NAME} ${plain}${red}v${SCRIPT_VERSION}${plain}
+    Latest release version: ${green}${GG_LATEST_VERSION}${plain}
     ————————————————
     ${green}1.${plain} Install service
     ${green}2.${plain} Start service
@@ -412,39 +444,42 @@ before_show_menu() {
   show_menu
 }
 
+start_check
+
 if [ $# -gt 0 ] && [ -n "$1" ]; then
   case $1 in
   "install")
-    install_service
+    install_service 0
     ;;
   "start")
-    start_service
+    start_service 0
     ;;
   "stop")
-    stop_service
+    stop_service 0
     ;;
   "restart")
-    restart_service
+    restart_service 0
     ;;
   "upgrade")
-    upgrade_service
+    upgrade_service 0
     ;;
   "uninstall")
-    uninstall_service
+    uninstall_service 0
     ;;
   "status")
-    show_service_status
+    show_service_status 0
     ;;
   "log")
-    show_service_log
+    show_service_log 0
     ;;
   "edit")
-    edit_service_config
+    edit_service_config 0
     ;;
   *)
-    $@ || show_usage
+    $@ || show_usage 0
     ;;
   esac
 else
   show_menu
 fi
+

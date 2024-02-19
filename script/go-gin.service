@@ -1,5 +1,5 @@
 [Unit]
-Description=go-gin
+Description=go-gin service
 After=syslog.target
 
 [Service]
@@ -9,7 +9,7 @@ Group=nogroup
 Restart=on-failure
 RestartSec=30s
 WorkingDirectory=/opt/go-gin
-ExecStart=/opt/go-gin/go-gin -c /opt/go-gin/config.yaml
+ExecStart=/opt/go-gin/go-gin -c go-gin
 
 [Install]
 WantedBy=multi-user.target
