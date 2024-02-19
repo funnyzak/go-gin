@@ -211,6 +211,16 @@ You can pull the source code to compile the binary executable file yourself, or 
 
 **Note:** Please make sure that executable permissions have been set before running. If there are no executable permissions, you can set them through the `chmod +x go-gin` command.
 
+## Run as Service
+
+### Linux (systemd)
+
+In Linux, services are managed through Systemd. You can use the following commands to install, start, stop, restart, log, and view the status of services, etc.
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/funnyzak/go-gin/main/script/install.sh)"
+```
+
 ## License
 
 MIT License
