@@ -59,7 +59,7 @@ start_check() {
 
     ping_check
 
-    GG_LATEST_VERSION=$(get_service_version)
+    GG_LATEST_VERSION=$(get_service_latest_version)
     if [ -z "${GG_LATEST_VERSION}" ]; then
         echo -e "${red}ERROR${plain}: Get ${GG_SERVICE_NAME} latest version failed."
         exit 1
@@ -353,7 +353,7 @@ download_service_app() {
   chmod +x ${GG_SERVICE_PATH}
 }
 
-get_service_version() {
+get_service_latest_version() {
   local latest_version=$(curl -s ${GG_RELEASES_DATA_URL} | grep "tag_name" | head -n 1 | awk -F '"' '{print $4}')
   if [ -n "${latest_version}" ]; then
     echo "${latest_version}"
