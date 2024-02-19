@@ -16,21 +16,21 @@ SCRIPT_VERSION="0.0.1"
 SCRIPT_NAME="GO-GIN Management Script"
 GG_DESCRIPTION="Go-Gin is a web service based on Golang and Gin framework."
 GG_NAME="go-gin"
-GG_GITHUB_REPO_NAME="funnyzak/${GG_NAME}"
+GG_REPO_NAME="funnyzak/${GG_NAME}"
 
 GG_SERVICE_NAME="${GG_NAME}"
-CGS_BASE_PATH="/opt/${GG_SERVICE_NAME}"
-GG_SERVICE_PATH="${CGS_BASE_PATH}/${GG_SERVICE_NAME}"
-CGS_CONFIG_PATH="${CGS_BASE_PATH}/config.yaml"
-GG_LOG_PATH="${CGS_BASE_PATH}/logs/log.log"
-CGS_SERVICE_PATH="/etc/systemd/system/${GG_SERVICE_NAME}.service"
-GG_RELEASES_DATA_URL="https://api.github.com/repos/${GG_GITHUB_REPO_NAME}/releases"
+CG_BASE_PATH="/opt/${GG_SERVICE_NAME}"
+GG_SERVICE_PATH="${CG_BASE_PATH}/${GG_SERVICE_NAME}"
+CG_CONFIG_PATH="${CG_BASE_PATH}/config.yaml"
+GG_LOG_PATH="${CG_BASE_PATH}/logs/log.log"
+CG_SERVICE_PATH="/etc/systemd/system/${GG_SERVICE_NAME}.service"
+GG_RELEASES_DATA_URL="https://api.github.com/repos/${GG_REPO_NAME}/releases"
 
 GG_LATEST_VERSION=""
 GG_LATEST_VERSION_ZIP_NAME=""
 GG_LATEST_VERSION_DOWNLOAD_URL=""
 
-GG_RAW_URL="https://raw.githubusercontent.com/${GG_GITHUB_REPO_NAME}/main"
+GG_RAW_URL="https://raw.githubusercontent.com/${GG_REPO_NAME}/main"
 GG_CONFIG_SAMPLE_URL="${GG_RAW_URL}/config.example.yaml"
 
 os_arch=""
@@ -64,7 +64,7 @@ start_check() {
     fi
 
     GG_LATEST_VERSION_ZIP_NAME="${GG_SERVICE_NAME}-linux-${os_arch}-${GG_LATEST_VERSION}.zip"
-    GG_LATEST_VERSION_DOWNLOAD_URL="https://github.com/${GG_GITHUB_REPO_NAME}/releases/download/${GG_LATEST_VERSION}/${GG_LATEST_VERSION_ZIP_NAME}"
+    GG_LATEST_VERSION_DOWNLOAD_URL="https://github.com/${GG_REPO_NAME}/releases/download/${GG_LATEST_VERSION}/${GG_LATEST_VERSION_ZIP_NAME}"
 
 }
 
@@ -94,11 +94,11 @@ confirm() {
 
 install_service() {
   echo -e "Install ${green}${GG_SERVICE_NAME}${plain} service..."
-  if [ -f "${CGS_SERVICE_PATH}" ]; then
+  if [ -f "${CG_SERVICE_PATH}" ]; then
     echo -e "${red}${GG_SERVICE_NAME}${plain} service already exists."
   fi
-  if [ ! -d "${CGS_BASE_PATH}" ]; then
-    mkdir -p ${CGS_BASE_PATH}
+  if [ ! -d "${CG_BASE_PATH}" ]; then
+    mkdir -p ${CG_BASE_PATH}
   fi
   download_service_app
   download_service_config
@@ -174,7 +174,7 @@ edit_service_config() {
 }
 
 download_service_config() {
-  download_file "${GG_CONFIG_SAMPLE_URL}" "${CGS_CONFIG_PATH}"
+  download_file "${GG_CONFIG_SAMPLE_URL}" "${CG_CONFIG_PATH}"
   if [ $? -ne 0 ]; then
     return 0
   fi
@@ -191,7 +191,7 @@ download_service_app() {
   if [ -f "${GG_SERVICE_PATH}" ]; then
     rm -f ${GG_SERVICE_PATH}
   fi
-  unzip -o /tmp/${GG_LATEST_VERSION_ZIP_NAME} -d ${CGS_BASE_PATH} > /dev/null 2>&1
+  unzip -o /tmp/${GG_LATEST_VERSION_ZIP_NAME} -d ${CG_BASE_PATH} > /dev/null 2>&1
   if [ $? -ne 0 ]; then
     echo -e "${red}ERROR${plain}: Unzip ${GG_LATEST_VERSION_ZIP_NAME} failed."
     return 0
