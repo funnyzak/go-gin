@@ -3,9 +3,6 @@ Description=go-gin service
 After=syslog.target
 
 [Service]
-Type=simple
-User=nobody
-Group=nogroup
 Restart=on-failure
 RestartSec=10s
 WorkingDirectory=/opt/go-gin
