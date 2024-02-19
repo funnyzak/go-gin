@@ -309,6 +309,10 @@ edit_service_config() {
     echo -e "${red}ERROR${plain}: No editor found."
     return 1
   fi
+  echo -e "${green}${GG_SERVICE_NAME}${plain} service config edit success."
+  if confirm "Do you want to restart ${GG_SERVICE_NAME} service?"; then
+    execute_funcs "service_action restart"
+  fi
 
   if [[ $# == 0 ]]; then
     before_show_menu
