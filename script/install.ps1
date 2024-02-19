@@ -86,5 +86,12 @@ if ($args[0] -eq "enable") {
         }
     }
 } else {
-    Write-Host "Please specify 'enable' or 'disable'."
+    Write-Host "Usage: go-gin.ps1 [install|uninstall|enable|disable|start|stop|restart|status]"
+    Write-Host "  enable   - Enable the service."
+    Write-Host "  disable  - Disable the service."
+    Write-Host "  start    - Start the service."
+    Write-Host "  stop     - Stop the service."
+    Write-Host "  restart  - Restart the service."
+    Write-Host "  status   - Show the status of the service."
+    exit
 }

@@ -211,14 +211,40 @@ You can pull the source code to compile the binary executable file yourself, or 
 
 **Note:** Please make sure that executable permissions have been set before running. If there are no executable permissions, you can set them through the `chmod +x go-gin` command.
 
-## Run as Service
+### Run as Service
 
-### Linux (systemd)
+#### Linux (systemd)
 
 In Linux, services are managed through Systemd. You can use the following commands to install, start, stop, restart, log, and view the status of services, etc.
 
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/funnyzak/go-gin/main/script/install.sh)"
+```
+
+#### Windows
+
+Service on Windows can be implemented using Task Scheduler. You can use the following steps to install and start the service.
+
+1. Dwnload the binary executable file of the corresponding system architecture from the [releases](https://github.com/funnyzak/go-gin/releases) page or [GitHub Actions](https://github.com/funnyzak/go-gin/actions) page, and unzip it to the `C:\go-gin` directory.
+2. Download [install.ps1](https://raw.githubusercontent.com/funnyzak/go-gin/main/script/install.ps1) file to the `C:\go-gin` directory and rename it to `go-gin.ps1`.
+3. Download [config.example.ps1](https://raw.githubusercontent.com/funnyzak/go-gin/main/config.example.yaml) file to the `C:\go-gin` directory and rename it to `config.yaml`, and update the values.
+
+Finally, run the following command to start the service:
+
+```powershell
+cd C:\go-gin
+.\go-gin.ps1 enable
+```
+
+The following are all the commands supported by the script:
+
+```powershell
+./go-gin.ps1 enable  # Enable and start the service
+./go-gin.ps1 disable # Disable and stop the service
+./go-gin.ps1 start   # Start the service
+./go-gin.ps1 stop    # Stop the service
+./go-gin.ps1 restart # Restart the service
+./go-gin.ps1 status  # View the service status
 ```
 
 ## License
