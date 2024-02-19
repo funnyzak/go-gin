@@ -268,9 +268,9 @@ The following are all the commands supported by the script:
 ./go-gin.ps1 status  # View the service status
 ```
 
-## License
+## LICENSE
 
-MIT License
+[MIT License](https://opensource.org/licenses/MIT)
 
 [repo-size-image]: https://img.shields.io/github/repo-size/funnyzak/go-gin?style=flat-square&logo=github&logoColor=white&label=size
 [down-latest-image]: https://img.shields.io/github/downloads/funnyzak/go-gin/latest/total.svg
