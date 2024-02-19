@@ -5,10 +5,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/glebarez/sqlite"
 	"github.com/patrickmn/go-cache"
 	"github.com/rs/zerolog"
 	"github.com/spf13/viper"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
 	"go-gin/internal/gconfig"

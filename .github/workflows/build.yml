@@ -9,7 +9,7 @@ on:
       - '.github/**'
       - '.gitignore'
       - 'makefile'
-      - 'config.yaml.example'
+      - 'config.example.yaml'
       - 'script/**'
       - '.vscode/**'
   pull_request:
@@ -20,7 +20,7 @@ on:
       - '.github/**'
       - '.gitignore'
       - 'makefile'
-      - 'config.yaml.example'
+      - 'config.example.yaml'
       - 'script/**'
       - '.vscode/**'
   workflow_dispatch:

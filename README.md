@@ -19,10 +19,10 @@ If you want to develop with this project, you can follow the steps below.
     git clone git@github.com:funnyzak/go-gin.git && cd go-gin
    ```
   
-2. Copy the `config.yaml.example` file to `config.yaml` and update the values.
+2. Copy the `config.example.yaml` file to `config.yaml` and update the values.
 
    ```bash
-    cp config.yaml.example config.yaml
+    cp config.example.yaml config.yaml
    ```
 
 3. Run the application.
@@ -48,7 +48,7 @@ You can fork this repository and add Secrets Keys: `DOCKER_USERNAME` and `DOCKER
 ├── cmd
 │   ├── main.go             // The main entry point for the application
 │   └── srv                 // Server controller
-├── config.yaml.example     // An example configuration file for the project
+├── config.example.yaml     // An example configuration file for the project
 ├── docker-compose.yml      // Defines services, networks and volumes for docker-compose
 ├── internal
 │   ├── gconfig             // Internal package for configuration
@@ -77,7 +77,7 @@ You can fork this repository and add Secrets Keys: `DOCKER_USERNAME` and `DOCKER
 
 ## Configuration
 
-The configuration file is in the `config.yaml` file, you can copy the `config.yaml.example` file to `config.yaml` and update the values, the configuration file is as follows:
+The configuration file is in the `config.yaml` file, you can copy the `config.example.yaml` file to `config.yaml` and update the values, the configuration file is as follows:
 
 ```yaml
 server:

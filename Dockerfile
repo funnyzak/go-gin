@@ -35,7 +35,7 @@ COPY --from=builder /app/gogin .
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
-COPY ./config.yaml.example /app/config.yaml
+COPY ./config.example.yaml /app/config.yaml
 
 EXPOSE 8080
 
