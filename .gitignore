@@ -7,7 +7,6 @@ db/
 logs/
 logs/*.log
 
-config.env
 .env
 .venv
 env/
@@ -17,8 +16,8 @@ __debug**
 node_modules/
 robots.txt
 
-/*.yaml
-
+*.yaml
+!*.example.yaml
 
 build/
 dist/

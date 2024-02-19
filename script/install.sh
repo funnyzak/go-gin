@@ -31,7 +31,7 @@ GG_LATEST_VERSION_ZIP_NAME=""
 GG_LATEST_VERSION_DOWNLOAD_URL=""
 
 GG_RAW_URL="https://raw.githubusercontent.com/${GG_GITHUB_REPO_NAME}/main"
-GG_CONFIG_SAMPLE_URL="${GG_RAW_URL}/config.yaml.example"
+GG_CONFIG_SAMPLE_URL="${GG_RAW_URL}/config.example.yaml"
 
 os_arch=""
 [ -e /etc/os-release ] && cat /etc/os-release | grep -i "PRETTY_NAME" | grep -qi "alpine" && os_alpine='1'
