@@ -15,8 +15,10 @@ export PATH=$PATH:/usr/local/bin
 SCRIPT_VERSION="0.0.1" # script version
 SCRIPT_NAME="GO-GIN Management Script" # script name
 GG_DESCRIPTION="Go-Gin is a web service based on Golang and Gin framework." # service description
+
 GG_NAME="go-gin" # service name
 GG_REPO_NAME="funnyzak/${GG_NAME}" # service repo name
+GG_REPO_BRANCH="installsrcipt" # service repo branch
 
 GG_SERVICE_NAME="${GG_NAME}" # service system name
 GG_WORK_PATH="/opt/${GG_SERVICE_NAME}" # service workdir path
@@ -29,7 +31,7 @@ GG_LATEST_VERSION="" # service latest version
 GG_LATEST_VERSION_ZIP_NAME="" # service latest version zip name
 GG_LATEST_VERSION_DOWNLOAD_URL="" # service latest version download url
 
-GG_RAW_URL="https://raw.githubusercontent.com/${GG_REPO_NAME}/main" # service attachment prefix url
+GG_RAW_URL="https://raw.githubusercontent.com/${GG_REPO_NAME}/${GG_REPO_BRANCH}" # service attachment prefix url
 GG_CONFIG_SAMPLE_URL="${GG_RAW_URL}/config.example.yaml" # service sample config download url
 
 os_arch="" # system arch
@@ -124,28 +126,38 @@ get_service_log_path() {
 }
 service_exists() {
   if command -v systemctl >/dev/null 2>&1 && systemctl is-active --quiet ${GG_SERVICE_NAME}; then
-    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service is already installed."
+    # echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service is already installed."
     return 0
   else
-    echo -e "${green}${GG_SERVICE_NAME}${plain} service is not installed."
+    # echo -e "${green}${GG_SERVICE_NAME}${plain} service is not installed."
     return 1
   fi
 }
 
 service_action() {
-  echo -e "${action} ${green}${GG_SERVICE_NAME}${plain} service..."
-
   local action=$1
   shift
 
-  systemctl ${action} ${GG_SERVICE_NAME}
+  echo -e "${action} ${green}${GG_SERVICE_NAME}${plain} service..."
 
-  if [[ $? -ne 0 ]]; then
-    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} ${action} failed."
-    return 1
+  if ! service_exists; then
+    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service not installed. Please install it first."
+    if confirm "Do you want to install it now?"; then
+      install_service
+    else
+      return 1
+    fi
+  else
+    systemctl ${action} ${GG_SERVICE_NAME}
+
+    if [[ $? -ne 0 ]]; then
+      echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} ${action} failed."
+      return 1
+    fi
+
+    echo -e "${green}${GG_SERVICE_NAME}${plain} service ${action} success."
   fi
 
-  echo -e "${green}${GG_SERVICE_NAME}${plain} service ${action} success."
   if [[ $# == 0 ]]; then
     before_show_menu
   fi
@@ -199,6 +211,9 @@ upgrade_service() {
       return 1
     fi
     echo -e "${green}${GG_SERVICE_NAME}${plain} service for ${os_arch} upgrade success. the latest version is ${GG_LATEST_VERSION}. Enjoy it!"
+  else
+    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service not installed or upgrade failed."
+    return 1
   fi
 
   if [[ $# == 0 ]]; then
@@ -217,6 +232,9 @@ uninstall_service() {
     systemctl daemon-reload
     systemctl reset-failed
     echo -e "${green}${GG_SERVICE_NAME}${plain} service uninstall success. Goodbye!"
+  else
+    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service uninstall failed. Please check ${GG_SERVICE_NAME} service is installed."
+    return 1
   fi
 
   if [[ $# == 0 ]]; then
@@ -244,6 +262,7 @@ edit_service_config() {
   echo -e "Edit ${green}${GG_SERVICE_NAME}${plain} service config..."
 
   if ! service_exists; then
+    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service not installed. Please install it first."
     return 1
   fi
 
