@@ -17,7 +17,7 @@ import (
 	"go-gin/pkg/utils"
 )
 
-var Version = "0.0.1"
+var Version = "0.1.3"
 
 var (
 	ViperConf *viper.Viper    // Viper config for the application
