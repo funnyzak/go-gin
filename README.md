@@ -221,13 +221,34 @@ In Linux, services are managed through Systemd. You can use the following comman
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/funnyzak/go-gin/main/script/install.sh)"
 ```
 
+#### MacOS (launchd)
+
+Service on MacOS is based on launchd. You can use the following steps to install and start the service.
+
+1. Download the binary executable file of the corresponding system architecture from the [releases](https://github.com/funnyzak/go-gin/releases) page or [GitHub Actions](https://github.com/funnyzak/go-gin/actions) page, and copy it to the `/opt/go-gin` directory.
+2. Grant the executable permission to the file by running the following command:
+
+    ```bash
+    sudo chmod +x /opt/go-gin/go-gin
+    ```
+
+3. Download [com.go-gin.plist](https://raw.githubusercontent.com/funnyzak/go-gin/main/script/com.go-gin.plist) file to the `/Library/LaunchDaemons` directory.
+4. Download [config.example.yaml](https://raw.githubusercontent.com/funnyzak/go-gin/main/config.example.yaml) file to the `/opt/go-gin` directory and rename it to `config.yaml`, and update the values.
+
+Finally, run the following command to start the service:
+
+```bash
+sudo launchctl load /Library/LaunchDaemons/com.go-gin.plist
+sudo launchctl start /Library/LaunchDaemons/com.go-gin.plist
+```
+
 #### Windows
 
 Service on Windows can be implemented using Task Scheduler. You can use the following steps to install and start the service.
 
 1. Dwnload the binary executable file of the corresponding system architecture from the [releases](https://github.com/funnyzak/go-gin/releases) page or [GitHub Actions](https://github.com/funnyzak/go-gin/actions) page, and unzip it to the `C:\go-gin` directory.
 2. Download [install.ps1](https://raw.githubusercontent.com/funnyzak/go-gin/main/script/install.ps1) file to the `C:\go-gin` directory and rename it to `go-gin.ps1`.
-3. Download [config.example.ps1](https://raw.githubusercontent.com/funnyzak/go-gin/main/config.example.yaml) file to the `C:\go-gin` directory and rename it to `config.yaml`, and update the values.
+3. Download [config.example.yaml](https://raw.githubusercontent.com/funnyzak/go-gin/main/config.example.yaml) file to the `C:\go-gin` directory and rename it to `config.yaml`, and update the values.
 
 Finally, run the following command to start the service:
 
@@ -247,9 +268,9 @@ The following are all the commands supported by the script:
 ./go-gin.ps1 status  # View the service status
 ```
 
-## License
+## LICENSE
 
-MIT License
+[MIT License](https://opensource.org/licenses/MIT)
 
 [repo-size-image]: https://img.shields.io/github/repo-size/funnyzak/go-gin?style=flat-square&logo=github&logoColor=white&label=size
 [down-latest-image]: https://img.shields.io/github/downloads/funnyzak/go-gin/latest/total.svg

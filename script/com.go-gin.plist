@@ -8,8 +8,6 @@
     <key>ProgramArguments</key>
     <array>
       <string>/opt/go-gin/go-gin</string>
-      <string>-c</string>
-      <string>go-gin</string>
     </array>
     <key>KeepAlive</key>
     <true/>
