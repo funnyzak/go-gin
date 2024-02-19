@@ -1,0 +1,15 @@
+[Unit]
+Description=go-gin
+After=syslog.target
+
+[Service]
+Type=simple
+User=nobody
+Group=nogroup
+Restart=on-failure
+RestartSec=30s
+WorkingDirectory=/opt/go-gin
+ExecStart=/opt/go-gin/go-gin -c /opt/go-gin/config.yaml
+
+[Install]
+WantedBy=multi-user.target

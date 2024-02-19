@@ -12,28 +12,28 @@ yellow='\033[0;33m'
 plain='\033[0m'
 export PATH=$PATH:/usr/local/bin
 
-SCRIPT_VERSION="0.0.1"
-SCRIPT_NAME="GO-GIN Management Script"
-GG_DESCRIPTION="Go-Gin is a web service based on Golang and Gin framework."
-GG_NAME="go-gin"
-GG_REPO_NAME="funnyzak/${GG_NAME}"
+SCRIPT_VERSION="0.0.1" # script version
+SCRIPT_NAME="GO-GIN Management Script" # script name
+GG_DESCRIPTION="Go-Gin is a web service based on Golang and Gin framework." # service description
+GG_NAME="go-gin" # service name
+GG_REPO_NAME="funnyzak/${GG_NAME}" # service repo name
 
-GG_SERVICE_NAME="${GG_NAME}"
-CG_BASE_PATH="/opt/${GG_SERVICE_NAME}"
-GG_SERVICE_PATH="${CG_BASE_PATH}/${GG_SERVICE_NAME}"
-CG_CONFIG_PATH="${CG_BASE_PATH}/config.yaml"
-GG_LOG_PATH="${CG_BASE_PATH}/logs/log.log"
-CG_SERVICE_PATH="/etc/systemd/system/${GG_SERVICE_NAME}.service"
-GG_RELEASES_DATA_URL="https://api.github.com/repos/${GG_REPO_NAME}/releases"
+GG_SERVICE_NAME="${GG_NAME}" # service system name
+GG_WORK_PATH="/opt/${GG_SERVICE_NAME}" # service workdir path
+GG_SERVICE_PATH="${GG_WORK_PATH}/${GG_SERVICE_NAME}" # service app path
+GG_CONFIG_PATH="${GG_WORK_PATH}/config.yaml" # service config path
+GG_SERVICE_PATH="/etc/systemd/system/${GG_SERVICE_NAME}.service" # service path in systemd
+GG_RELEASES_DATA_URL="https://api.github.com/repos/${GG_REPO_NAME}/releases" # service releases data url for get latest version
 
-GG_LATEST_VERSION=""
-GG_LATEST_VERSION_ZIP_NAME=""
-GG_LATEST_VERSION_DOWNLOAD_URL=""
+GG_LATEST_VERSION="" # service latest version
+GG_LATEST_VERSION_ZIP_NAME="" # service latest version zip name
+GG_LATEST_VERSION_DOWNLOAD_URL="" # service latest version download url
 
-GG_RAW_URL="https://raw.githubusercontent.com/${GG_REPO_NAME}/main"
-GG_CONFIG_SAMPLE_URL="${GG_RAW_URL}/config.example.yaml"
+GG_RAW_URL="https://raw.githubusercontent.com/${GG_REPO_NAME}/main" # service attachment prefix url
+GG_CONFIG_SAMPLE_URL="${GG_RAW_URL}/config.example.yaml" # service sample config download url
 
-os_arch=""
+os_arch="" # system arch
+
 [ -e /etc/os-release ] && cat /etc/os-release | grep -i "PRETTY_NAME" | grep -qi "alpine" && os_alpine='1'
 
 start_check() {
@@ -65,7 +65,6 @@ start_check() {
 
     GG_LATEST_VERSION_ZIP_NAME="${GG_SERVICE_NAME}-linux-${os_arch}-${GG_LATEST_VERSION}.zip"
     GG_LATEST_VERSION_DOWNLOAD_URL="https://github.com/${GG_REPO_NAME}/releases/download/${GG_LATEST_VERSION}/${GG_LATEST_VERSION_ZIP_NAME}"
-
 }
 
 ping_check() {
@@ -92,34 +91,84 @@ confirm() {
   fi
 }
 
-install_service() {
-  echo -e "Install ${green}${GG_SERVICE_NAME}${plain} service..."
-  if [ -f "${CG_SERVICE_PATH}" ]; then
-    echo -e "${red}${GG_SERVICE_NAME}${plain} service already exists."
+execute_funcs() {
+  for one_func in "$@"; do
+    if ! $one_func; then
+      echo -e "${red}ERROR${plain}: execute function list ${@} failed, failed function is ${one_func}."
+      return 1
+    fi
+  done
+}
+
+get_service_log_path() {
+  local log_path=""
+  local log_paths=$(grep -i "path" ${GG_CONFIG_PATH} | awk '{print $2}')
+  if [ -n "${log_paths}" ]; then
+    for i in ${log_paths}; do
+      if [[ $i == *log* ]]; then
+        log_path=$i
+      fi
+    done
+  else
+    echo ""
   fi
-  if [ ! -d "${CG_BASE_PATH}" ]; then
-    mkdir -p ${CG_BASE_PATH}
+  if [ -n "${log_path}" ]; then
+    if [[ ${log_path} != /* ]]; then
+      log_path=$(dirname ${GG_SERVICE_PATH})/${log_path}
+      echo ${log_path}
+    fi
+  else
+    echo ""
   fi
-  download_service_app
-  download_service_config
-  # download_service_template
+
+}
+service_exists() {
+  if command -v systemctl >/dev/null 2>&1 && systemctl is-active --quiet ${GG_SERVICE_NAME}; then
+    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service is already installed."
+    return 0
+  else
+    echo -e "${green}${GG_SERVICE_NAME}${plain} service is not installed."
+    return 1
+  fi
 }
 
 service_action() {
   echo -e "${action} ${green}${GG_SERVICE_NAME}${plain} service..."
 
   local action=$1
-  local zero_flag=$2
+  shift
 
   systemctl ${action} ${GG_SERVICE_NAME}
 
   if [[ $? -ne 0 ]]; then
     echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} ${action} failed."
-    return 0
+    return 1
   fi
 
   echo -e "${green}${GG_SERVICE_NAME}${plain} service ${action} success."
-  if [[ -n "${zero_flag}" ]]; then
+  if [[ $# == 0 ]]; then
+    before_show_menu
+  fi
+}
+
+create_service_workdir() {
+  if [ ! -d "${GG_WORK_PATH}" ]; then
+    mkdir -p ${GG_WORK_PATH}
+  fi
+}
+
+install_service() {
+  echo -e "Install ${green}${GG_SERVICE_NAME}${plain} service..."
+
+  execute_funcs "service_exists" "download_service_app" "download_service_template" "download_service_config" "service_action enable" "service_action start"
+  if [ $? -ne 0 ]; then
+    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service install failed."
+    return 1
+  fi
+
+  echo -e "${green}${GG_SERVICE_NAME}${plain} service for ${os_arch} install success. the latest version is ${GG_LATEST_VERSION}. Enjoy it!"
+
+  if [[ $# == 0 ]]; then
     before_show_menu
   fi
 }
@@ -137,11 +186,20 @@ restart_service() {
 }
 
 show_service_status() {
-  service_action status
+  service_action status $1
 }
 
 upgrade_service() {
   echo -e "Upgrade ${green}${GG_SERVICE_NAME}${plain} service..."
+
+  if service_exists && confirm "Do you want to upgrade ${GG_SERVICE_NAME} service?"; then
+    execute_funcs "download_service_app" "service_action restart"
+    if [ $? -ne 0 ]; then
+      echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service upgrade failed."
+      return 1
+    fi
+    echo -e "${green}${GG_SERVICE_NAME}${plain} service for ${os_arch} upgrade success. the latest version is ${GG_LATEST_VERSION}. Enjoy it!"
+  fi
 
   if [[ $# == 0 ]]; then
     before_show_menu
@@ -151,6 +209,16 @@ upgrade_service() {
 uninstall_service() {
   echo -e "Uninstall ${green}${GG_SERVICE_NAME}${plain} service..."
 
+  if service_exists && confirm "Do you want to uninstall ${GG_SERVICE_NAME} service?"; then
+    execute_funcs "service_action stop" "service_action disable"
+    rm -f ${GG_SERVICE_PATH}
+    rm -f ${GG_CONFIG_PATH}
+    rm -rf ${GG_WORK_PATH}
+    systemctl daemon-reload
+    systemctl reset-failed
+    echo -e "${green}${GG_SERVICE_NAME}${plain} service uninstall success. Goodbye!"
+  fi
+
   if [[ $# == 0 ]]; then
     before_show_menu
   fi
@@ -159,7 +227,14 @@ uninstall_service() {
 show_service_log() {
   echo -e "Show ${green}${GG_SERVICE_NAME}${plain} service log..."
 
-  watch -n 1 tail -n 20 ${GG_LOG_PATH}
+  if ! service_exists || [ -z "$(get_service_log_path)" ]; then
+    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service log not found."
+    return 1
+  fi
+
+  echo -e "Press ${red}Ctrl+C${plain} to exit."
+  watch -n 1 tail -n 20 “$(get_service_log_path)”
+
   if [[ $# == 0 ]]; then
     before_show_menu
   fi
@@ -168,33 +243,60 @@ show_service_log() {
 edit_service_config() {
   echo -e "Edit ${green}${GG_SERVICE_NAME}${plain} service config..."
 
+  if ! service_exists; then
+    return 1
+  fi
+
+  if [ ! -f "${GG_CONFIG_PATH}" ]; then
+    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} config file not found."
+    return 1
+  fi
+
+  if command -v vim >/dev/null 2>&1; then
+    vim ${GG_CONFIG_PATH}
+  elif command -v nano >/dev/null 2>&1; then
+    nano ${GG_CONFIG_PATH}
+  elif command -v vi >/dev/null 2>&1; then
+    vi ${GG_CONFIG_PATH}
+  else
+    echo -e "${red}ERROR${plain}: No editor found."
+    return 1
+  fi
+
   if [[ $# == 0 ]]; then
     before_show_menu
   fi
 }
 
 download_service_config() {
-  download_file "${GG_CONFIG_SAMPLE_URL}" "${CG_CONFIG_PATH}"
+  create_service_workdir
+  download_file "${GG_CONFIG_SAMPLE_URL}" "${GG_CONFIG_PATH}"
   if [ $? -ne 0 ]; then
-    return 0
+    return 1
   fi
+}
+
+download_service_template() {
+  create_service_workdir
+  download_file "${GG_RAW_URL}/script/${GG_SERVICE_NAME}.service" "${GG_SERVICE_PATH}"
   if [ $? -ne 0 ]; then
-    return 0
+    return 1
   fi
 }
 
 download_service_app() {
+  create_service_workdir
   download_file "${GG_LATEST_VERSION_DOWNLOAD_URL}" "/tmp/${GG_LATEST_VERSION_ZIP_NAME}"
   if [ $? -ne 0 ]; then
-    return 0
+    return 1
   fi
   if [ -f "${GG_SERVICE_PATH}" ]; then
     rm -f ${GG_SERVICE_PATH}
   fi
-  unzip -o /tmp/${GG_LATEST_VERSION_ZIP_NAME} -d ${CG_BASE_PATH} > /dev/null 2>&1
+  unzip -o /tmp/${GG_LATEST_VERSION_ZIP_NAME} -d ${GG_WORK_PATH} > /dev/null 2>&1
   if [ $? -ne 0 ]; then
     echo -e "${red}ERROR${plain}: Unzip ${GG_LATEST_VERSION_ZIP_NAME} failed."
-    return 0
+    return 1
   fi
 }
 
@@ -213,7 +315,7 @@ download_file() {
   wget -t 3 -T 15 -O ${file} ${url} > /dev/null 2>&1
   if [ $? -ne 0 ]; then
     echo -e "${red}ERROR${plain}: Download ${url} failed."
-    return 0
+    return 1
   fi
 }
 

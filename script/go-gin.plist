@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
+"http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>go-gin</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>/opt/go-gin/go-gin</string>
+      <string>-c</string>
+      <string>/opt/go-gin/config.yaml</string>
+    </array>
+    <key>KeepAlive</key>
+    <true/>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>WorkingDirectory</key>
+    <string>/opt/go-gin</string>
+  </dict>
+</plist>
