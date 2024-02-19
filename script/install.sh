@@ -18,7 +18,7 @@ GG_DESCRIPTION="Go-Gin is a web service based on Golang and Gin framework." # se
 
 GG_NAME="go-gin" # service name
 GG_REPO_NAME="funnyzak/${GG_NAME}" # service repo name
-GG_REPO_BRANCH="installsrcipt" # service repo branch
+GG_REPO_BRANCH="main" # service repo branch
 
 GG_SERVICE_NAME="${GG_NAME}" # service system name
 GG_WORK_PATH="/opt/${GG_SERVICE_NAME}" # service workdir path
@@ -279,7 +279,7 @@ show_service_log() {
   fi
 
   echo -e "Press ${red}Ctrl+C${plain} to exit."
-  watch -n 1 tail -n 20 “$(get_service_log_path)”
+  watch -n 1 tail -n 20 "$(get_service_log_path)"
 
   if [[ $# == 0 ]]; then
     before_show_menu

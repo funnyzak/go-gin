@@ -9,7 +9,7 @@
     <array>
       <string>/opt/go-gin/go-gin</string>
       <string>-c</string>
-      <string>/opt/go-gin/config.yaml</string>
+      <string>go-gin</string>
     </array>
     <key>KeepAlive</key>
     <true/>
