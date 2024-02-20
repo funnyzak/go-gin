@@ -4,7 +4,6 @@ Gin gonic starter with zerolog, viper, gorm, jwt, go-cache, rate-limit, cron, no
 
 [![Build Status][build-status-image]][build-status]
 [![license][license-image]][repository-url]
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ffunnyzak%2Fgo-gin.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Ffunnyzak%2Fgo-gin?ref=badge_shield)
 [![GitHub repo size][repo-size-image]][repository-url]
 [![docker][docker-image]][docker-url]
 [![tag][tag-image]][rle-url]
@@ -268,8 +267,6 @@ The following are all the commands supported by the script:
 ./go-gin.ps1 restart # Restart the service
 ./go-gin.ps1 status  # View the service status
 ```
-## FOSSA Status
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ffunnyzak%2Fgo-gin.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Ffunnyzak%2Fgo-gin?ref=badge_large)
 
 ## LICENSE
 
@@ -294,4 +291,5 @@ The following are all the commands supported by the script:
 [tag-image]: https://img.shields.io/github/tag/funnyzak/go-gin.svg
 [docker-image]: https://img.shields.io/docker/pulls/funnyzak/go-gin
 [docker-url]: https://hub.docker.com/r/funnyzak/go-gin
-
+[fossa-image]: https://app.fossa.com/api/projects/git%2Bgithub.com%2Ffunnyzak%2Fgo-gin.svg?type=large
+[fossa-url]: https://app.fossa.com/projects/git%2Bgithub.com%2Ffunnyzak%2Fgo-gin?ref=badge_large
