@@ -473,7 +473,7 @@ show_menu() {
     ————————————————
     ${green}0.${plain} Exit
     "
-  echo && read -ep "Please enter a number [0-9]: " num
+  echo && read -ep "Please enter a number [0-10]: " num
 
   case "${num}" in
   0)
