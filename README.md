@@ -1,12 +1,13 @@
+
 # Go Gin
 
 Gin gonic starter with zerolog, viper, gorm, jwt, go-cache, rate-limit, cron, notification, etc.
 
 [![Build Status][build-status-image]][build-status]
+[![Go Version][go-version-image]](https://github.com/funnyzak/go-gin/blob/main/go.mod)
+[![docker][docker-image]][docker-url]
 [![license][license-image]][repository-url]
 [![GitHub repo size][repo-size-image]][repository-url]
-[![docker][docker-image]][docker-url]
-[![tag][tag-image]][rle-url]
 [![release][rle-image]][rle-url]
 
 ## Development
@@ -268,6 +269,10 @@ The following are all the commands supported by the script:
 ./go-gin.ps1 status  # View the service status
 ```
 
+## FOSSA Scan
+
+[![FOSSA Status][fossa-image]][fossa-url]
+
 ## LICENSE
 
 [MIT License](https://opensource.org/licenses/MIT)
@@ -283,7 +288,7 @@ The following are all the commands supported by the script:
 [rle-all-url]: https://github.com/funnyzak/go-gin/releases
 [ci-image]: https://img.shields.io/github/workflow/status/funnyzak/go-gin/react-native-android-build-apk
 [ci-url]: https://github.com/funnyzak/go-gin/actions
-[rle-image]: https://img.shields.io/github/release-date/funnyzak/go-gin.svg?style=flat-square&label=release
+[rle-image]: https://img.shields.io/github/release/funnyzak/go-gin.svg?style=smartthings
 [sg-image]: https://img.shields.io/badge/view%20on-Sourcegraph-brightgreen.svg?style=flat-square
 [sg-url]: https://sourcegraph.com/github.com/funnyzak/go-gin
 [build-status-image]: https://github.com/funnyzak/go-gin/actions/workflows/build.yml/badge.svg
@@ -293,3 +298,4 @@ The following are all the commands supported by the script:
 [docker-url]: https://hub.docker.com/r/funnyzak/go-gin
 [fossa-image]: https://app.fossa.com/api/projects/git%2Bgithub.com%2Ffunnyzak%2Fgo-gin.svg?type=large
 [fossa-url]: https://app.fossa.com/projects/git%2Bgithub.com%2Ffunnyzak%2Fgo-gin?ref=badge_large
+[go-version-image]: https://img.shields.io/github/go-mod/go-version/funnyzak/go-gin?logo=go
