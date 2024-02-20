@@ -3,14 +3,16 @@ package main
 import (
 	"context"
 	"fmt"
-	"go-gin/cmd/srv/controller"
-	"go-gin/pkg/mygin"
-	"go-gin/pkg/utils"
-	"go-gin/service/singleton"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ory/graceful"
 	flag "github.com/spf13/pflag"
+
+	"go-gin/cmd/srv/controller"
+	"go-gin/pkg/mygin"
+	"go-gin/pkg/utils"
+	"go-gin/pkg/utils/ip"
+	"go-gin/service/singleton"
 )
 
 type CliParam struct {
@@ -58,7 +60,7 @@ func main() {
 		fmt.Println()
 		fmt.Println("Server is running at:")
 		fmt.Printf(" - %-7s: %s\n", "Local", utils.Colorize(utils.ColorGreen, fmt.Sprintf("http://127.0.0.1:%d", port)))
-		ipv4s, err := utils.GetIPv4NetworkIPs()
+		ipv4s, err := ip.GetIPv4NetworkIPs()
 		if ipv4s != nil && err == nil {
 			for _, ip := range ipv4s {
 				fmt.Printf(" - %-7s: %s\n", "Network", utils.Colorize(utils.ColorGreen, fmt.Sprintf("http://%s:%d", ip, port)))

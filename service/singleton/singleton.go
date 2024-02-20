@@ -14,7 +14,8 @@ import (
 	"go-gin/internal/gconfig"
 	"go-gin/model"
 	"go-gin/pkg/logger"
-	"go-gin/pkg/utils"
+	"go-gin/pkg/utils/conf"
+	"go-gin/pkg/utils/file"
 )
 
 var Version = "0.1.3"
@@ -44,7 +45,7 @@ func InitTimezoneAndCache() {
 }
 
 func InitConfig(name string) {
-	ViperConf, err := utils.ReadViperConfig(name, "yaml", []string{".", "./config", "../"})
+	ViperConf, err := conf.ReadViperConfig(name, "yaml", []string{".", "./config", "../"})
 	if err != nil {
 		panic(fmt.Errorf("unable to read config: %s", err))
 	}
@@ -66,7 +67,7 @@ func InitLog(conf *gconfig.Config) {
 // InitDBFromPath initialize the database from the given path
 func InitDBFromPath(path string) {
 	var err error
-	if err = utils.MkdirAllIfNotExists(path, os.ModePerm); err != nil {
+	if err = file.MkdirAllIfNotExists(path, os.ModePerm); err != nil {
 		panic(err)
 	}
 	DB, err = gorm.Open(sqlite.Open(path), &gorm.Config{

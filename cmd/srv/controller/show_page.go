@@ -4,7 +4,7 @@ import (
 	"go-gin/internal/gogin"
 	"go-gin/model"
 	"go-gin/pkg/mygin"
-	"go-gin/pkg/utils"
+	"go-gin/pkg/utils/parse"
 	"go-gin/service/singleton"
 	"net/http"
 
@@ -24,7 +24,7 @@ func (sp *showPage) serve() {
 }
 
 func (sp *showPage) postDetail(c *gin.Context) {
-	postId := utils.ParseInt(c.Param("id"), 0)
+	postId := parse.ParseInt(c.Param("id"), 0)
 	if postId <= 0 {
 		gogin.ShowErrorPage(c, mygin.ErrInfo{
 			Msg:  "Post not found",
