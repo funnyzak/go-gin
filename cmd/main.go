@@ -53,23 +53,23 @@ func main() {
 	srv := controller.ServerWeb(port)
 
 	startOutput := func() {
+
+		fmt.Println()
+		fmt.Println("Server available routes:")
+		mygin.PrintRoute(srv.Handler.(*gin.Engine))
+
 		fmt.Println()
 		fmt.Println("Server is running with config:")
 		utils.PrintStructFieldsAndValues(singleton.Conf, "")
 
 		fmt.Println()
-		fmt.Println("Server is running at:")
-		fmt.Printf(" - %-7s: %s\n", "Local", utils.Colorize(utils.ColorGreen, fmt.Sprintf("http://127.0.0.1:%d", port)))
 		ipv4s, err := ip.GetIPv4NetworkIPs()
 		if ipv4s != nil && err == nil {
+			fmt.Println("Server is running at:")
 			for _, ip := range ipv4s {
 				fmt.Printf(" - %-7s: %s\n", "Network", utils.Colorize(utils.ColorGreen, fmt.Sprintf("http://%s:%d", ip, port)))
 			}
 		}
-
-		fmt.Println()
-		fmt.Println("Server available routes:")
-		mygin.PrintRoute(srv.Handler.(*gin.Engine))
 		fmt.Println()
 	}
 
