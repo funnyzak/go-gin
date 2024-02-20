@@ -5,7 +5,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/glebarez/sqlite"
+	_ "github.com/ncruces/go-sqlite3/embed"
+	"github.com/ncruces/go-sqlite3/gormlite"
 	"github.com/patrickmn/go-cache"
 	"github.com/rs/zerolog"
 	"github.com/spf13/viper"
@@ -70,7 +71,7 @@ func InitDBFromPath(path string) {
 	if err = file.MkdirAllIfNotExists(path, os.ModePerm); err != nil {
 		panic(err)
 	}
-	DB, err = gorm.Open(sqlite.Open(path), &gorm.Config{
+	DB, err = gorm.Open(gormlite.Open(path), &gorm.Config{
 		CreateBatchSize: 200,
 	})
 	if err != nil {
