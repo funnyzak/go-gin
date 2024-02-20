@@ -6,7 +6,7 @@ import (
 	"go-gin/mappers"
 	"go-gin/model"
 	"go-gin/pkg/mygin"
-	"go-gin/pkg/utils"
+	"go-gin/pkg/utils/parse"
 	"go-gin/service/singleton"
 
 	"github.com/gin-gonic/gin"
@@ -43,7 +43,7 @@ func (v *apiV1) serve() {
 var authModel = model.Auth{}
 
 func (v *apiV1) logout(c *gin.Context) {
-	isPage := utils.ParseBool(c.Query("page"), false)
+	isPage := parse.ParseBool(c.Query("page"), false)
 	gogin.UserLogout(c)
 	if isPage {
 		gogin.ShowMessagePage(c, "Logout success", singleton.Conf.Site.BaseURL, "Back to home")
@@ -54,7 +54,7 @@ func (v *apiV1) logout(c *gin.Context) {
 
 func (v *apiV1) refresh(c *gin.Context) {
 	var tokenForm mappers.Token
-	if err := mygin.BindForm(c, utils.ParseBool("form", false), &tokenForm); err != nil {
+	if err := mygin.BindForm(c, parse.ParseBool("form", false), &tokenForm); err != nil {
 		mygin.ResponseJSON(c, 400, gin.H{}, "refresh token is required")
 		return
 	}
@@ -68,7 +68,7 @@ func (v *apiV1) refresh(c *gin.Context) {
 
 func (v *apiV1) postPost(c *gin.Context) {
 	var postForm mappers.PostForm
-	isForm := utils.ParseBool(c.Query("form"), false)
+	isForm := parse.ParseBool(c.Query("form"), false)
 	if err := mygin.BindForm(c, isForm, &postForm); err != nil {
 		gogin.ShowErrorPage(c, mygin.ErrInfo{
 			Code: 400,

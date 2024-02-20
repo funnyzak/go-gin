@@ -6,7 +6,7 @@ import (
 	"go-gin/mappers"
 	"go-gin/model"
 	"go-gin/pkg/mygin"
-	"go-gin/pkg/utils"
+	"go-gin/pkg/utils/parse"
 	"go-gin/service/singleton"
 	"net/http"
 
@@ -32,7 +32,7 @@ func (ua *userAPI) serve() {
 func (ua *userAPI) login(c *gin.Context) {
 	var loginForm mappers.LoginForm
 
-	isPage := utils.ParseBool(c.Query("page"), false)
+	isPage := parse.ParseBool(c.Query("page"), false)
 	showError := func(err error) {
 		gogin.ShowErrorPage(c, mygin.ErrInfo{
 			Title: "Login failed",
@@ -68,7 +68,7 @@ func (ua *userAPI) login(c *gin.Context) {
 func (ua *userAPI) register(c *gin.Context) {
 	var registerForm mappers.RegisterForm
 
-	isPage := utils.ParseBool(c.Query("page"), false)
+	isPage := parse.ParseBool(c.Query("page"), false)
 	showError := func(err error) {
 		gogin.ShowErrorPage(c, mygin.ErrInfo{
 			Title: "Register failed",
