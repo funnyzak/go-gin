@@ -222,6 +222,30 @@ In Linux, services are managed through Systemd. You can use the following comman
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/funnyzak/go-gin/main/script/install.sh)"
 ```
 
+You can also install it manually. The specific steps are as follows:
+
+<details>
+  <summary> Click to expand </summary>
+
+1. Download the binary executable file of the corresponding system architecture from the [releases](https://github.com/funnyzak/go-gin/releases) page or [GitHub Actions](https://github.com/funnyzak/go-gin/actions) page, and copy it to the `/opt/go-gin` directory.
+2. Grant the executable permission to the file by running the following command:
+
+    ```bash
+    sudo chmod +x /opt/go-gin/go-gin
+    ```
+
+3. Download [go-gin.service](https://raw.githubusercontent.com/funnyzak/go-gin/main/script/go-gin.service) file to the `/etc/systemd/system` directory.
+4. Download [config.example.yaml](https://raw.githubusercontent.com/funnyzak/go-gin/main/config.example.yaml) file to the `/opt/go-gin` directory and rename it to `go-gin.yaml`, and update the values.
+
+Finally, run the following command to start the service:
+
+```bash
+sudo systemctl enable go-gin
+systemctl start go-gin
+```
+
+</details>
+
 #### MacOS (launchd)
 
 Service on MacOS is based on launchd. You can use the following steps to install and start the service.
