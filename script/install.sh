@@ -27,7 +27,7 @@ GG_CONFIG_PATH="${GG_WORK_PATH}/${GG_SERVICE_NAME}.yaml"                     # s
 GG_SYSTEMD_PATH="/etc/systemd/system/${GG_SERVICE_NAME}.service"             # systemd service config file path
 GG_RELEASES_DATA_URL="https://api.github.com/repos/${GG_REPO_NAME}/releases" # service releases data url for get latest version
 
-GG_LATEST_VERSION=""              # service latest version, init by
+GG_LATEST_VERSION=""              # service latest version, init by get_service_latest_version
 GG_LATEST_VERSION_ZIP_NAME=""     # service latest version zip name
 GG_LATEST_VERSION_DOWNLOAD_URL="" # service latest version download url
 

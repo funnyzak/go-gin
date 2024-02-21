@@ -1,7 +1,7 @@
 
 # Go Gin
 
-Gin gonic starter with zerolog, viper, gorm, jwt, go-cache, rate-limit, cron, notification, etc.
+Go-gin is a starter for Gin Gonic, featuring Zerolog, Viper, Gorm, JWT, Go-Cache, rate limiting, cron scheduling, notifications, utility packages, and more.
 
 [![Build Status][build-status-image]][build-status]
 [![Go Version][go-version-image]](https://github.com/funnyzak/go-gin/blob/main/go.mod)
@@ -30,6 +30,7 @@ If you want to develop with this project, you can follow the steps below.
 
    ```bash
     go run cmd/main.go
+
     # or 
     make dev
 
@@ -65,7 +66,7 @@ You can fork this repository and add Secrets Keys: `DOCKER_USERNAME` and `DOCKER
 ├── pkg
 │   ├── logger              // Package for logging
 │   ├── mygin               // Custom package for the gin framework
-│   └── utils               // Utility functions
+│   └── utils               // Utility packages
 ├── resource
 │   ├── resource.go         // Resource management
 │   ├── static              // Static files such as HTML, CSS, JavaScript, images
