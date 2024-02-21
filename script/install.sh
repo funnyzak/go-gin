@@ -6,13 +6,14 @@
 #   Github: https://github.com/funnyzak/go-gin
 #========================================================
 
+export PATH=$PATH:/usr/local/bin
+
 red='\033[0;31m'
 green='\033[0;32m'
 yellow='\033[0;33m'
 plain='\033[0m'
-export PATH=$PATH:/usr/local/bin
 
-SCRIPT_VERSION="0.0.1"                                                      # script version
+SCRIPT_VERSION="0.0.2"                                                      # script version
 SCRIPT_NAME="GO-GIN Script"                                                 # script name
 GG_DESCRIPTION="Go-Gin is a web service based on Golang and Gin framework." # service description
 
@@ -27,15 +28,16 @@ GG_CONFIG_PATH="${GG_WORK_PATH}/${GG_SERVICE_NAME}.yaml"                     # s
 GG_SYSTEMD_PATH="/etc/systemd/system/${GG_SERVICE_NAME}.service"             # systemd service config file path
 GG_RELEASES_DATA_URL="https://api.github.com/repos/${GG_REPO_NAME}/releases" # service releases data url for get latest version
 
+GG_RAW_URL="https://raw.githubusercontent.com/${GG_REPO_NAME}/${GG_REPO_BRANCH}" # service attachment prefix url
+GG_SYSTEMD_TEMPLATE_URL="${GG_RAW_URL}/script/${GG_SERVICE_NAME}.service"        # systemd service template download url
+GG_CONFIG_SAMPLE_URL="${GG_RAW_URL}/config.example.yaml"                         # service sample config download url
+SCRIPT_DOWNLINK="${GG_RAW_URL}/script/install.sh"                                # script download url
+
 GG_LATEST_VERSION=""              # service latest version, init by get_service_latest_version
 GG_LATEST_VERSION_ZIP_NAME=""     # service latest version zip name
 GG_LATEST_VERSION_DOWNLOAD_URL="" # service latest version download url
 
-GG_RAW_URL="https://raw.githubusercontent.com/${GG_REPO_NAME}/${GG_REPO_BRANCH}" # service attachment prefix url
-GG_CONFIG_SAMPLE_URL="${GG_RAW_URL}/config.example.yaml"                         # service sample config download url
-SCRIPT_DOWNLINK="${GG_RAW_URL}/script/install.sh"                                # script download url
-
-system_architecture="" # system arch
+system_architecture="" # system architecture, init by check_system_requirements
 
 [ -e /etc/os-release ] && cat /etc/os-release | grep -i "PRETTY_NAME" | grep -qi "alpine" && os_alpine='1'
 
@@ -366,7 +368,7 @@ download_service_config() {
 
 download_service_template() {
   create_service_workdir
-  download_file "${GG_RAW_URL}/script/${GG_SERVICE_NAME}.service" "${GG_SYSTEMD_PATH}"
+  download_file "${GG_SYSTEMD_TEMPLATE_URL}" "${GG_SYSTEMD_PATH}"
   if [ $? -ne 0 ]; then
     return 1
   fi
@@ -394,6 +396,7 @@ get_service_latest_version() {
   if [ -n "${GG_LATEST_VERSION}" ]; then
     return 0
   fi
+  ping_check # check network
   GG_LATEST_VERSION=$(curl -s ${GG_RELEASES_DATA_URL} | grep "tag_name" | head -n 1 | awk -F '"' '{print $4}')
   if [ -z "${GG_LATEST_VERSION}" ]; then
     echo -e "${red}ERROR${plain}: Get ${GG_SERVICE_NAME} latest version failed."
