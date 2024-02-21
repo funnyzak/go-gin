@@ -33,6 +33,13 @@ var (
 func LoadSingleton() {
 	LoadCronTasks()
 	LoadNotifications()
+	InitUpload()
+}
+
+func InitUpload() {
+	if err := file.MkdirAllIfNotExists(Conf.Upload.Dir, os.ModePerm); err != nil {
+		panic(err)
+	}
 }
 
 func InitTimezoneAndCache() {

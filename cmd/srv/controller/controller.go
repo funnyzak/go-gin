@@ -52,7 +52,7 @@ func serveStatic(r *gin.Engine) {
 	r.StaticFS("/static", http.FS(staticFs))
 
 	// Serve uploaded files
-	r.Static("/upload", singleton.Conf.Upload.Dir)
+	r.Static(singleton.Conf.Upload.VirtualPath, singleton.Conf.Upload.Dir)
 }
 
 // Load templates

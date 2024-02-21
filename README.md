@@ -98,6 +98,7 @@ rate_limit:
 enable_cors: false # Enable CORS
 enable_user_registration: true # Enable user registration
 upload:
+  virtual_path: /upload # Virtual path
   dir: upload # Upload directory
   max_size: 10485760 # 10MB
 jwt: # JWT settings
