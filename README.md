@@ -98,8 +98,17 @@ rate_limit:
 enable_cors: false # Enable CORS
 enable_user_registration: true # Enable user registration
 upload:
+  virtual_path: /upload # Virtual path
   dir: upload # Upload directory
-  max_size: 10485760 # 10MB
+  max_size: 10485760 # 10MB, unit: byte
+  keep_original_name: true # Keep original file name
+  create_date_dir: true # Create date directory
+  allow_types: # Allowed file types
+    - image/jpeg
+    - image/jpg
+    - image/png
+    - image/gif
+    - image/bmp
 jwt: # JWT settings
   access_secret: qhkxjrRmYcVYKSEobqsvhxhtPVeTWquu # Access token secret
   refresh_secret: qhkxjrRmYcVYKSEobqsvhxhtPV3TWquu # Refresh token secret

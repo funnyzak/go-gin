@@ -27,8 +27,12 @@ type Config struct {
 	EnableCORS             bool `mapstructure:"enable_cors"`
 	EnableUserRegistration bool `mapstructure:"enable_user_registration"`
 	Upload                 struct {
-		Dir     string `mapstructure:"dir"`
-		MaxSize int    `mapstructure:"max_size"`
+		Dir              string   `mapstructure:"dir"`
+		VirtualPath      string   `mapstructure:"virtual_path"`
+		MaxSize          int64    `mapstructure:"max_size"`
+		KeepOriginalName bool     `mapstructure:"keep_original_name"`
+		CreateDateDir    bool     `mapstructure:"create_date_dir"`
+		AllowTypes       []string `mapstructure:"allow_types"`
 	} `mapstructure:"upload"`
 	Log struct {
 		Level string `mapstructure:"level"`

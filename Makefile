@@ -10,6 +10,12 @@ dev:
 	@echo "Starting development service..."
 	@go run cmd/main.go
 
+.PHONY: clean
+clean:
+	@echo "Cleaning up..."
+	@rm -rf ./release ./dist ./db ./logs ./upload ./cmd/db ./cmd/upload ./cmd/logs
+	@echo "Cleaned up."
+
 .PHONY: deps
 deps:
 	@echo "Installing dependencies..."

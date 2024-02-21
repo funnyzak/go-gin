@@ -35,6 +35,14 @@ func GetCurrentUser(c *gin.Context) (user model.User, err error) {
 	return user, nil
 }
 
+func GetCurrentUserId(c *gin.Context) uint64 {
+	user, err := GetCurrentUser(c)
+	if err != nil {
+		return 0
+	}
+	return user.ID
+}
+
 func ShowErrorPage(c *gin.Context, i mygin.ErrInfo, isPage bool) {
 	if isPage {
 		c.HTML(i.Code, "error", CommonEnvironment(c, gin.H{

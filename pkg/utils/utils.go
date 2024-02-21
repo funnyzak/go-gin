@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"reflect"
+	"time"
 
 	"github.com/twinj/uuid"
 )
@@ -72,4 +73,43 @@ func PrintStructFieldsAndValues(s interface{}, indent string) {
 			}
 		}
 	}
+}
+
+func InArrayString(needle string, haystack []string) bool {
+	for _, v := range haystack {
+		if v == needle {
+			return true
+		}
+	}
+	return false
+}
+
+func InArrayInt(needle int, haystack []int) bool {
+	for _, v := range haystack {
+		if v == needle {
+			return true
+		}
+	}
+	return false
+}
+
+func InArrayInt64(needle int64, haystack []int64) bool {
+	for _, v := range haystack {
+		if v == needle {
+			return true
+		}
+	}
+	return false
+}
+
+func TimeFormatString(time time.Time, format string) string {
+	return time.Format(format)
+}
+
+func TimeNowFormatString(format string) string {
+	return time.Now().Format(format)
+}
+
+func TimeNowString() string {
+	return TimeNowFormatString("2006-01-02 15:04:05")
 }
