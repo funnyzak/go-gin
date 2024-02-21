@@ -4,8 +4,8 @@ import "github.com/gin-gonic/gin"
 
 type Response struct {
 	Code    int         `json:"code,omitempty"`
-	Message string      `json:"message,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
+	Message string      `json:"message,omitempty"`
 }
 
 type ErrInfo struct {
@@ -18,14 +18,14 @@ type ErrInfo struct {
 
 func ResponseJSON(c *gin.Context, code int, data interface{}, messages ...string) {
 	rlt := &Response{}
-	if len(messages) > 0 {
-		rlt.Message = messages[0]
-	}
 	if code > 0 {
 		rlt.Code = code
 	}
 	if data != nil {
 		rlt.Data = data
+	}
+	if len(messages) > 0 {
+		rlt.Message = messages[0]
 	}
 	c.AbortWithStatusJSON(code, rlt)
 }
