@@ -22,6 +22,7 @@ func (v *apiV1) serve() {
 	r.Use(gogin.Authorize(gogin.AuthorizeOption{
 		User:     true,
 		IsPage:   false,
+		AllowAPI: true,
 		Msg:      "Please log in first",
 		Btn:      "Log in",
 		Redirect: fmt.Sprintf("%s/login", singleton.Conf.Site.BaseURL),
