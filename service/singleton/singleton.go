@@ -3,6 +3,7 @@ package singleton
 import (
 	"fmt"
 	"os"
+	"path"
 	"time"
 
 	_ "github.com/ncruces/go-sqlite3/embed"
@@ -73,12 +74,12 @@ func InitLog(conf *gconfig.Config) {
 }
 
 // InitDBFromPath initialize the database from the given path
-func InitDBFromPath(path string) {
+func InitDBFromPath(dbpath string) {
 	var err error
-	if err = file.MkdirAllIfNotExists(path, os.ModePerm); err != nil {
+	if err = file.MkdirAllIfNotExists(path.Dir(dbpath), os.ModePerm); err != nil {
 		panic(err)
 	}
-	DB, err = gorm.Open(gormlite.Open(path), &gorm.Config{
+	DB, err = gorm.Open(gormlite.Open(dbpath), &gorm.Config{
 		CreateBatchSize: 200,
 	})
 	if err != nil {

@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"io"
 	"os"
-	"path"
 	"path/filepath"
 )
 
@@ -44,10 +43,9 @@ func FileMD5(filePath string) (string, error) {
 }
 
 func MkdirAllIfNotExists(pathname string, perm os.FileMode) error {
-	dir := path.Dir(pathname)
-	if _, err := os.Stat(dir); err != nil {
+	if _, err := os.Stat(pathname); err != nil {
 		if os.IsNotExist(err) {
-			if err := os.MkdirAll(dir, perm); err != nil {
+			if err := os.MkdirAll(pathname, perm); err != nil {
 				return err
 			}
 		}
