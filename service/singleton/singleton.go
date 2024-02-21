@@ -20,7 +20,7 @@ import (
 	"go-gin/pkg/utils/file"
 )
 
-var Version = "0.1.8"
+var Version = "0.2.0"
 
 var (
 	ViperConf *viper.Viper    // Viper config for the application
