@@ -13,7 +13,7 @@ import (
 type User struct {
 	Common
 	UserName           string `json:"username,omitempty" gorm:"unique;column:username"`
-	Password           string `json:"password,omitempty" gorm:"column:password"`
+	Password           string `json:"-" gorm:"column:password"`
 	ForgotPasswordCode string `json:"forgot_password_code,omitempty" gorm:"column:forgot_password_code"`
 	VerificationCode   string `json:"verification_code,omitempty" gorm:"column:verification_code"`
 
