@@ -1,6 +1,7 @@
 package model
 
 import (
+	"go-gin/pkg/mygin"
 	"go-gin/pkg/utils"
 
 	"gorm.io/gorm"
@@ -24,9 +25,20 @@ type Attachment struct {
 }
 
 func (a *Attachment) Create(db *gorm.DB) (err error) {
-	if a.Num == "" {
-		a.Num = utils.GenHexStr(32)
-	}
+	err = db.Model(&Attachment{}).Create(&a).Error
+	return err
+}
+
+func (a *Attachment) CreateByAttachment(db *gorm.DB, uploadedFile mygin.AttachmentUploadedFile) (err error) {
+	a.Num = utils.GenHexStr(32)
+	a.Name = uploadedFile.OriginalName
+	a.SavePath = uploadedFile.SavePath
+	a.MD5 = uploadedFile.MD5
+	a.Url = uploadedFile.Url
+	a.Size = uploadedFile.Size
+	a.MiMe = uploadedFile.MiMe
+	a.Width = uploadedFile.Width
+	a.Height = uploadedFile.Height
 	err = db.Model(&Attachment{}).Create(&a).Error
 	return err
 }

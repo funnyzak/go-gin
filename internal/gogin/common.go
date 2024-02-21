@@ -79,3 +79,13 @@ func UserLogout(c *gin.Context) {
 	c.SetCookie(singleton.Conf.JWT.AccessTokenCookieName, "", -1, "/", "", false, true)
 	c.SetCookie(singleton.Conf.JWT.RefreshTokenCookieName, "", -1, "/", "", false, true)
 }
+
+func AttachmentUpload(c *gin.Context) (*model.Attachment, error) {
+	result, err := singleton.AttachmentUpload.Upload(c)
+	if err != nil {
+		return nil, err
+	}
+	var attachmentModel = model.Attachment{}
+	attachmentModel.CreateByAttachment(singleton.DB, *result)
+	return &attachmentModel, nil
+}
