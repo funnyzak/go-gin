@@ -71,7 +71,11 @@ func routers(r *gin.Engine) {
 
 	r.Use(gogin.LoggingHandler())
 	r.Use(mygin.GenerateContextIdHandler())
-	r.Use(mygin.CORSHandler())
+
+	if singleton.Conf.EnableCORS {
+		r.Use(mygin.CORSHandler())
+	}
+
 	r.Use(gogin.RateLimiterHandler(singleton.Conf.RateLimit.Max))
 
 	// Serve common pages, e.g. home, ping
