@@ -2,6 +2,7 @@ package controller
 
 import (
 	"go-gin/internal/gogin"
+	"go-gin/pkg/mygin"
 	"go-gin/service/singleton"
 	"net/http"
 
@@ -26,6 +27,16 @@ func (gp *guestPage) serve() {
 }
 
 func (gp *guestPage) register(c *gin.Context) {
+	if !singleton.Conf.EnableUserRegistration {
+		gogin.ShowErrorPage(c, mygin.ErrInfo{
+			Title: "Registration is disabled",
+			Code:  http.StatusNotAcceptable,
+			Msg:   "Please contact the administrator",
+			Link:  singleton.Conf.Site.BaseURL,
+			Btn:   "Return to home",
+		}, true)
+		return
+	}
 	c.HTML(http.StatusOK, "register", gogin.CommonEnvironment(
 		c, gin.H{
 			"Title": "Register",

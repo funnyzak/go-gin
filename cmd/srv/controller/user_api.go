@@ -66,16 +66,27 @@ func (ua *userAPI) login(c *gin.Context) {
 }
 
 func (ua *userAPI) register(c *gin.Context) {
+	isPage := parse.ParseBool(c.Query("page"), false)
+
+	if !singleton.Conf.EnableUserRegistration {
+		gogin.ShowErrorPage(c, mygin.ErrInfo{
+			Title: "Register failed",
+			Code:  http.StatusNotAcceptable,
+			Msg:   "User registration is not allowed",
+			Link:  singleton.Conf.Site.BaseURL,
+			Btn:   "Back to home",
+		}, isPage)
+		return
+	}
 	var registerForm mappers.RegisterForm
 
-	isPage := parse.ParseBool(c.Query("page"), false)
 	showError := func(err error) {
 		gogin.ShowErrorPage(c, mygin.ErrInfo{
 			Title: "Register failed",
 			Code:  http.StatusNotAcceptable,
 			Msg:   err.Error(),
 			Link:  fmt.Sprintf("%s/register", singleton.Conf.Site.BaseURL),
-			Btn:   "Back to home",
+			Btn:   "Back",
 		}, isPage)
 	}
 

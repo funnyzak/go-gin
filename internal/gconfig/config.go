@@ -24,7 +24,9 @@ type Config struct {
 	RateLimit struct {
 		Max int `mapstructure:"max"`
 	} `mapstructure:"rate_limit"`
-	Upload struct {
+	EnableCORS             bool `mapstructure:"enable_cors"`
+	EnableUserRegistration bool `mapstructure:"enable_user_registration"`
+	Upload                 struct {
 		Dir     string `mapstructure:"dir"`
 		MaxSize int    `mapstructure:"max_size"`
 	} `mapstructure:"upload"`
