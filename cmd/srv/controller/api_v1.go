@@ -28,6 +28,8 @@ func (v *apiV1) serve() {
 		Redirect: fmt.Sprintf("%s/login", singleton.Conf.Site.BaseURL),
 	}))
 
+	r.POST("/attchment/upload", v.upload) // upload file
+
 	r.POST("/post", v.postPost)         // create post
 	r.GET("/post/:id", v.getPost)       // get post
 	r.DELETE("/post/:id", v.deletePost) // delete post
@@ -42,6 +44,15 @@ func (v *apiV1) serve() {
 }
 
 var authModel = model.Auth{}
+
+func (v *apiV1) upload(c *gin.Context) {
+	result, err := singleton.AttchmentUpload.Upload(c)
+	if err != nil {
+		mygin.ResponseJSON(c, 400, gin.H{}, err.Error())
+		return
+	}
+	mygin.ResponseJSON(c, 200, result, "upload success")
+}
 
 func (v *apiV1) logout(c *gin.Context) {
 	isPage := parse.ParseBool(c.Query("page"), false)
