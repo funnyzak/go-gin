@@ -15,8 +15,6 @@ type showPage struct {
 	r *gin.Engine
 }
 
-var postModel = model.Post{}
-
 func (sp *showPage) serve() {
 	gr := sp.r.Group("")
 	gr.GET("/post/:id", sp.postDetail)
@@ -31,7 +29,8 @@ func (sp *showPage) postDetail(c *gin.Context) {
 			Code: http.StatusNotFound}, true)
 		return
 	}
-	post, err := postModel.Get(postId, singleton.DB)
+	post := model.Post{}
+	err := post.Get(postId, singleton.DB)
 	if err != nil {
 		gogin.ShowErrorPage(c, mygin.ErrInfo{
 			Msg:  "Post not found",
@@ -45,7 +44,7 @@ func (sp *showPage) postDetail(c *gin.Context) {
 }
 
 func (sp *showPage) postList(c *gin.Context) {
-	posts, _ := postModel.List(singleton.DB, "id > ?", 0)
+	posts, _ := model.NewPost().List(singleton.DB, "id > ?", 0)
 	c.HTML(http.StatusOK, "post/list", gogin.CommonEnvironment(c, gin.H{
 		"Posts": posts,
 	}))

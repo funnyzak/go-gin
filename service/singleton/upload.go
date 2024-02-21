@@ -5,11 +5,11 @@ import (
 )
 
 var (
-	AttchmentUpload *mygin.AttchmentUpload
+	AttachmentUpload *mygin.AttachmentUpload
 )
 
 func LoadUpload() {
-	AttchmentUpload = &mygin.AttchmentUpload{
+	AttachmentUpload = &mygin.AttachmentUpload{
 		BaseURL:          Conf.Site.BaseURL + Conf.Upload.VirtualPath,
 		MaxSize:          Conf.Upload.MaxSize,
 		AllowTypes:       Conf.Upload.AllowTypes,

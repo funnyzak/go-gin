@@ -14,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type AttchmentUpload struct {
+type AttachmentUpload struct {
 	BaseURL          string   // BaseURL is the base url for the uploaded file
 	MaxSize          int64    // MaxSize is the max file size, default is 2MB
 	AllowTypes       []string // AllowTypes is the allowed file types
@@ -24,21 +24,21 @@ type AttchmentUpload struct {
 	KeepOriginalName bool     // KeepOriginalName is the flag to keep the original file name
 }
 
-type AttchmentUploadResult struct {
+type AttachmentUploadedFile struct {
 	Url          string `json:"url"`
 	Name         string `json:"name"`
 	OriginalName string `json:"original_name"`
 	Size         int64  `json:"size"`
 	MiMe         string `json:"mime"`
-	With         int    `json:"width"`
-	Hei          int    `json:"height"`
-	Ext          string `json:"ext"`
-	MD5          string `json:"md5"`
-	SavePath     string `json:"save_path"`
+	Width        int    `json:"width"`     // Width is the width of the image
+	Height       int    `json:"height"`    // Height is the height of the image
+	Ext          string `json:"ext"`       // Ext is the file extension, eg: .jpg
+	MD5          string `json:"md5"`       // MD5 is the md5 of the file
+	SavePath     string `json:"save_path"` // SavePath is the path to save the file
 }
 
-func (a *AttchmentUpload) Upload(c *gin.Context) (*AttchmentUploadResult, error) {
-	result := &AttchmentUploadResult{}
+func (a *AttachmentUpload) Upload(c *gin.Context) (*AttachmentUploadedFile, error) {
+	result := &AttachmentUploadedFile{}
 	form_file, err := c.FormFile(a.FormName)
 	if err != nil {
 		return result, err
@@ -89,14 +89,14 @@ func (a *AttchmentUpload) Upload(c *gin.Context) (*AttchmentUploadResult, error)
 	result.MiMe = form_file_mime
 	result.Ext = form_file_ext
 	result.MD5 = md5
-	result.With = w
-	result.Hei = h
+	result.Width = w
+	result.Height = h
 	result.SavePath = savePath
 	return result, nil
 }
 
-func NewAttchmentUpload() *AttchmentUpload {
-	return &AttchmentUpload{
+func NewAttachmentUpload() *AttachmentUpload {
+	return &AttachmentUpload{
 		BaseURL:    "/upload",
 		MaxSize:    1024 * 1024 * 2,
 		AllowTypes: []string{"image/jpeg", "image/png", "image/gif", "image/jpg"},

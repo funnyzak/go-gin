@@ -94,16 +94,16 @@ log:
   path: logs/go-gin.log # Log file path
 db_path: db/go-gin.sqlite # Database path
 rate_limit:
-  max: 100 # requests per minute
+  max: 100 # requests per minute, 0 means no limit
 enable_cors: false # Enable CORS
 enable_user_registration: true # Enable user registration
 upload:
-  virtual_path: /upload # Virtual path
-  dir: upload # Upload directory
+  virtual_path: /upload # Virtual path, used for generating absolute URLs, must start with /
+  dir: upload # Upload directory, relative to the project root directory. Or you can use an absolute path, such as /var/www/upload
   max_size: 10485760 # 10MB, unit: byte
-  keep_original_name: true # Keep original file name
-  create_date_dir: true # Create date directory
-  allow_types: # Allowed file types
+  keep_original_name: false # Keep original file name, if false, the server will generate a random file name
+  create_date_dir: true # Create date directory, such as /upload/2021/01/01
+  allow_types: # Allowed file types, if empty, all types are allowed
     - image/jpeg
     - image/jpg
     - image/png

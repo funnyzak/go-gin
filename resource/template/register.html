@@ -1,6 +1,6 @@
 {{ define "register" }}
 {{template "base/header" .}}
-    <form class="gogin-form" action="{{ .Conf.Site.BaseURL }}/api/register?page=1" method="post">
+    <form class="gogin-form" action="{{ .Conf.Site.BaseURL }}/api/user/register?page=1" method="post">
         <h1>Go-Gin Register</h1>
         <label for="username">Username</label>
         <input type="text" id="username" name="username" required>

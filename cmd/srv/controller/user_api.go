@@ -19,8 +19,8 @@ type userAPI struct {
 
 func (ua *userAPI) serve() {
 	ur := ua.r.Group("")
-	ur.POST("/login", ua.login)
-	ur.POST("/register", ua.register)
+	ur.POST("/user/login", ua.login)
+	ur.POST("/user/register", ua.register)
 
 	v1 := ua.r.Group("v1")
 	{
