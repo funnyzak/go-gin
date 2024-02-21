@@ -71,6 +71,9 @@ func main() {
 			}
 		}
 		fmt.Println()
+
+		fmt.Printf("Current service version: %s\n", utils.Colorize(utils.ColorGreen, singleton.Version))
+		fmt.Println()
 	}
 
 	if err := graceful.Graceful(func() error {
