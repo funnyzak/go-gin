@@ -2,6 +2,7 @@ package controller
 
 import (
 	"go-gin/internal/gogin"
+	"go-gin/model"
 	"go-gin/service/singleton"
 	"net/http"
 
@@ -29,7 +30,7 @@ func (up *userPage) serve() {
 
 func (sp *userPage) mine(c *gin.Context) {
 	user, _ := gogin.GetCurrentUser(c)
-	posts, _ := postModel.List(singleton.DB, "created_user = ?", user.ID)
+	posts, _ := model.NewPost().List(singleton.DB, "created_user = ?", user.ID)
 	c.HTML(http.StatusOK, "user/mine", gogin.CommonEnvironment(c, gin.H{
 		"Title": "Mine",
 		"Posts": posts,

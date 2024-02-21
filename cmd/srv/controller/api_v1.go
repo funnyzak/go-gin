@@ -28,16 +28,16 @@ func (v *apiV1) serve() {
 		Redirect: fmt.Sprintf("%s/login", singleton.Conf.Site.BaseURL),
 	}))
 
-	r.POST("/attachment/upload", v.upload) // upload file
+	r.PUT("/attachment", v.upload) // upload file
 
-	r.POST("/post", v.postPost)         // create post
+	r.POST("/post", v.editPost)         // create post
 	r.GET("/post/:id", v.getPost)       // get post
 	r.DELETE("/post/:id", v.deletePost) // delete post
 	r.GET("/posts", v.getPosts)         // get posts
 
-	user := v.r.Group("user")
+	user := r.Group("user")
 	{
-		user.GET("/info", v.getUserInfo)
+		user.GET("/info", v.userInfo)
 		user.GET("/logout", v.logout)
 		user.GET("/refresh", v.refresh)
 	}
@@ -78,7 +78,7 @@ func (v *apiV1) refresh(c *gin.Context) {
 	mygin.ResponseJSON(c, 200, tk, "refresh success")
 }
 
-func (v *apiV1) postPost(c *gin.Context) {
+func (v *apiV1) editPost(c *gin.Context) {
 	var postForm mappers.PostForm
 	isForm := parse.ParseBool(c.Query("form"), false)
 	if err := mygin.BindForm(c, isForm, &postForm); err != nil {
@@ -109,33 +109,57 @@ func (v *apiV1) postPost(c *gin.Context) {
 		gogin.ShowMessagePage(c, "Post success", fmt.Sprintf("/post/%d", post.ID), "View post")
 	} else {
 		mygin.ResponseJSON(c, 200,
-			gogin.CommonEnvironment(c, gin.H{
-				"post": post,
-			}), "post success")
+			gin.H{
+				"info": post,
+			}, "post success")
 	}
 }
 
 func (v *apiV1) getPost(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "post",
-	})
+	var post model.Post
+	err := post.Get(parse.ParseInt(c.Param("id"), 0), singleton.DB)
+	if err != nil {
+		mygin.ResponseJSON(c, 400, gin.H{}, err.Error())
+		return
+	}
+	mygin.ResponseJSON(c, 200,
+		gin.H{
+			"info": post,
+		})
 }
 
 func (v *apiV1) deletePost(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "post",
-	})
+	var post model.Post
+	err := post.Get(parse.ParseInt(c.Param("id"), 0), singleton.DB)
+	if err != nil {
+		mygin.ResponseJSON(c, 400, gin.H{}, err.Error())
+		return
+	}
+	if post.CreatedUser != gogin.GetCurrentUserId(c) {
+		mygin.ResponseJSON(c, 400, gin.H{}, "no permission")
+		return
+	}
+	err = post.Delete(parse.ParseInt(c.Param("id"), 0), singleton.DB)
+	if err != nil {
+		mygin.ResponseJSON(c, 400, gin.H{}, err.Error())
+		return
+	}
+	mygin.ResponseJSON(c, 200, gin.H{}, "delete success")
 }
 
 func (v *apiV1) getPosts(c *gin.Context) {
-	posts, _ := postModel.List(singleton.DB, "")
-	mygin.ResponseJSON(c, 200, gogin.CommonEnvironment(c, gin.H{
-		"Posts": posts,
-	}))
+	posts, _ := model.NewPost().List(singleton.DB, "id > ?", 0)
+	mygin.ResponseJSON(c, 200, gin.H{
+		"list": posts,
+	})
 }
 
-func (v *apiV1) getUserInfo(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "user info",
-	})
+func (v *apiV1) userInfo(c *gin.Context) {
+	var user model.User
+	err := user.GetByID(gogin.GetCurrentUserId(c), singleton.DB)
+	if err != nil {
+		mygin.ResponseJSON(c, 400, gin.H{}, err.Error())
+		return
+	}
+	mygin.ResponseJSON(c, 200, user, "get user info success")
 }

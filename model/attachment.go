@@ -24,6 +24,10 @@ type Attachment struct {
 	ExtConfig   string `json:"ext_config,omitempty" gorm:"column:ext_config"`
 }
 
+func NewAttachment() *Attachment {
+	return &Attachment{}
+}
+
 func (a *Attachment) Create(db *gorm.DB) (err error) {
 	err = db.Model(&Attachment{}).Create(&a).Error
 	return err

@@ -75,8 +75,17 @@ func (u *User) Register(form mappers.RegisterForm, db *gorm.DB, conf *gconfig.Co
 	return err
 }
 
+func NewUser() *User {
+	return &User{}
+}
+
 func (u *User) GetByUsername(username string, db *gorm.DB) (err error) {
 	err = db.Model(&User{}).Where("username = ?", username).First(&u).Error
+	return err
+}
+
+func (u *User) GetByID(id uint64, db *gorm.DB) (err error) {
+	err = db.Model(&User{}).Where("id = ?", id).First(&u).Error
 	return err
 }
 
