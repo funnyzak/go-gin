@@ -87,18 +87,19 @@ server:
 site:
   brand: Go-Gin # Site brand
   description: A simple web application using Go and Gin # Site description
-  base_url: http://localhost:8080 # Site base URL, used for generating absolute URLs
+  base_url: http://localhost:8080 # Site base URL, used for generating absolute URLs, cant end with /
 debug: false # Debug mode, if true, the server will print detailed error messages
 log:
   level: debug # debug, info, warn, error, fatal, panic
-  path: logs/go-gin.log # Log file path
-db_path: db/go-gin.sqlite # Database path
+  path: logs/go-gin.log # Log file path, relative to the project root directory. Or you can use an absolute path, such as /var/www/go-gin.log
+db_path: db/go-gin.sqlite # Database path, relative to the project root directory. Or you can use an absolute path, such as /var/www/go-gin.sqlite
 rate_limit:
   max: 100 # requests per minute, 0 means no limit
 enable_cors: false # Enable CORS
 enable_user_registration: true # Enable user registration
 upload:
-  virtual_path: /upload # Virtual path, used for generating absolute URLs, must start with /
+  virtual_path: /upload # Virtual path, used for generating absolute URLs, must start with /, cant end with /
+  url_prefix: http://localhost:8080/upload # URL prefix, used for generating absolute URLs, must start with http:// or https:// or /, cant end with /
   dir: upload # Upload directory, relative to the project root directory. Or you can use an absolute path, such as /var/www/upload
   max_size: 10485760 # 10MB, unit: byte
   keep_original_name: false # Keep original file name, if false, the server will generate a random file name
