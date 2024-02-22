@@ -15,7 +15,7 @@ import (
 )
 
 type AttachmentUpload struct {
-	BaseURL          string   // BaseURL is the base url for the uploaded file
+	URLPrefix        string   // URLPrefix is the prefix of the uploaded file url
 	MaxSize          int64    // MaxSize is the max file size, default is 2MB
 	AllowTypes       []string // AllowTypes is the allowed file types
 	FormName         string   // FormName is the form name for the file, default is "file"
@@ -37,7 +37,8 @@ type AttachmentUploadedFile struct {
 	SavePath     string `json:"save_path"` // SavePath is the path to save the file
 }
 
-func (a *AttachmentUpload) Upload(c *gin.Context) (*AttachmentUploadedFile, error) {
+// Upload uploads the file, and returns the uploaded file info.
+func (a *AttachmentUpload) Upload(c *gin.Context, subDir ...string) (*AttachmentUploadedFile, error) {
 	result := &AttachmentUploadedFile{}
 	form_file, err := c.FormFile(a.FormName)
 	if err != nil {
@@ -66,11 +67,20 @@ func (a *AttachmentUpload) Upload(c *gin.Context) (*AttachmentUploadedFile, erro
 	}
 
 	savePath := a.StoreDir
-	url := fmt.Sprintf("%s/%s", a.BaseURL, saveName)
-	if a.CreateDateDir {
-		savePath = path.Join(a.StoreDir, year, month, day)
-		url = fmt.Sprintf("%s/%s/%s/%s/%s", a.BaseURL, year, month, day, saveName)
+	url := a.URLPrefix
+	for _, v := range subDir {
+		if v != "" {
+			savePath = path.Join(savePath, v)
+			url = fmt.Sprintf("%s/%s", url, v)
+		}
 	}
+
+	if a.CreateDateDir {
+		savePath = path.Join(savePath, year+month+day)
+		url = fmt.Sprintf("%s/%s", url, year+month+day)
+	}
+	url = fmt.Sprintf("%s/%s", url, saveName)
+
 	if err := file.MkdirAllIfNotExists(savePath, os.ModePerm); err != nil {
 		return result, err
 	}
@@ -97,7 +107,7 @@ func (a *AttachmentUpload) Upload(c *gin.Context) (*AttachmentUploadedFile, erro
 
 func NewAttachmentUpload() *AttachmentUpload {
 	return &AttachmentUpload{
-		BaseURL:    "/upload",
+		URLPrefix:  "/upload",
 		MaxSize:    1024 * 1024 * 2,
 		AllowTypes: []string{"image/jpeg", "image/png", "image/gif", "image/jpg"},
 		FormName:   "file",

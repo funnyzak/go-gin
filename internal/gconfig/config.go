@@ -29,6 +29,7 @@ type Config struct {
 	Upload                 struct {
 		Dir              string   `mapstructure:"dir"`
 		VirtualPath      string   `mapstructure:"virtual_path"`
+		URLPrefix        string   `mapstructure:"url_prefix"`
 		MaxSize          int64    `mapstructure:"max_size"`
 		KeepOriginalName bool     `mapstructure:"keep_original_name"`
 		CreateDateDir    bool     `mapstructure:"create_date_dir"`

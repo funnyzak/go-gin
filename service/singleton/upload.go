@@ -2,6 +2,8 @@ package singleton
 
 import (
 	"go-gin/pkg/mygin"
+	"go-gin/pkg/utils/file"
+	"os"
 )
 
 var (
@@ -10,7 +12,7 @@ var (
 
 func LoadUpload() {
 	AttachmentUpload = &mygin.AttachmentUpload{
-		BaseURL:          Conf.Site.BaseURL + Conf.Upload.VirtualPath,
+		URLPrefix:        Conf.Upload.URLPrefix,
 		MaxSize:          Conf.Upload.MaxSize,
 		AllowTypes:       Conf.Upload.AllowTypes,
 		FormName:         "file",
@@ -18,4 +20,5 @@ func LoadUpload() {
 		CreateDateDir:    Conf.Upload.CreateDateDir,
 		KeepOriginalName: Conf.Upload.KeepOriginalName,
 	}
+	file.MkdirAllIfNotExists(Conf.Upload.Dir, os.ModePerm)
 }
