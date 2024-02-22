@@ -19,24 +19,16 @@ If you want to develop with this project, you can follow the steps below.
    ```bash
     git clone git@github.com:funnyzak/go-gin.git && cd go-gin
    ```
-  
-2. Copy the `config.example.yaml` file to `config.yaml` and update the values.
 
-   ```bash
-    cp config.example.yaml config.yaml
-   ```
-
-3. Run the application.
+2. Run the application.
 
    ```bash
     go run cmd/main.go
-
     # or 
     make dev
-
-    # You also specify the config file, e.g. dev, prod, etc.
-    go run cmd/main.go -c dev
     ```
+
+**Note:** The application will load the configuration from the `config.yaml` file in the root directory by default. If you want to use a different configuration file, you can copy `config.example.yaml` to `prod.yaml` and update the values. specify it using the `-c` parameter, for example: `go run cmd/main.go -c prod`, it will load the `prod.yaml` configuration file.
 
 ### CI/CD
 
