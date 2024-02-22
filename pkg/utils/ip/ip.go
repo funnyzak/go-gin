@@ -28,6 +28,9 @@ func GetNetworkIPs() ([]string, error) {
 
 	ips := make([]string, 0)
 	for _, i := range ifaces {
+		if i.Flags&net.FlagLoopback != 0 {
+			continue
+		}
 		addrs, err := i.Addrs()
 		if err != nil {
 			continue

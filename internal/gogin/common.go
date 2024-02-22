@@ -80,8 +80,8 @@ func UserLogout(c *gin.Context) {
 	c.SetCookie(singleton.Conf.JWT.RefreshTokenCookieName, "", -1, "/", "", false, true)
 }
 
-func AttachmentUpload(c *gin.Context) (*model.Attachment, error) {
-	result, err := singleton.AttachmentUpload.Upload(c)
+func AttachmentUpload(c *gin.Context, subDir ...string) (*model.Attachment, error) {
+	result, err := singleton.AttachmentUpload.Upload(c, subDir...)
 	if err != nil {
 		return nil, err
 	}

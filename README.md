@@ -19,24 +19,16 @@ If you want to develop with this project, you can follow the steps below.
    ```bash
     git clone git@github.com:funnyzak/go-gin.git && cd go-gin
    ```
-  
-2. Copy the `config.example.yaml` file to `config.yaml` and update the values.
 
-   ```bash
-    cp config.example.yaml config.yaml
-   ```
-
-3. Run the application.
+2. Run the application.
 
    ```bash
     go run cmd/main.go
-
     # or 
     make dev
-
-    # You also specify the config file, e.g. dev, prod, etc.
-    go run cmd/main.go -c dev
     ```
+
+**Note:** The application will load the configuration from the `config.yaml` file in the root directory by default. If you want to use a different configuration file, you can copy `config.example.yaml` to `prod.yaml` and update the values. specify it using the `-c` parameter, for example: `go run cmd/main.go -c prod`, it will load the `prod.yaml` configuration file.
 
 ### CI/CD
 
@@ -79,84 +71,7 @@ You can fork this repository and add Secrets Keys: `DOCKER_USERNAME` and `DOCKER
 
 ## Configuration
 
-The configuration file is in the `config.yaml` file, you can copy the `config.example.yaml` file to `config.yaml` and update the values, the configuration file is as follows:
-
-```yaml
-server:
-  port: 8080 # Server port
-site:
-  brand: Go-Gin # Site brand
-  description: A simple web application using Go and Gin # Site description
-  base_url: http://localhost:8080 # Site base URL, used for generating absolute URLs
-debug: false # Debug mode, if true, the server will print detailed error messages
-log:
-  level: debug # debug, info, warn, error, fatal, panic
-  path: logs/go-gin.log # Log file path
-db_path: db/go-gin.sqlite # Database path
-rate_limit:
-  max: 100 # requests per minute, 0 means no limit
-enable_cors: false # Enable CORS
-enable_user_registration: true # Enable user registration
-upload:
-  virtual_path: /upload # Virtual path, used for generating absolute URLs, must start with /
-  dir: upload # Upload directory, relative to the project root directory. Or you can use an absolute path, such as /var/www/upload
-  max_size: 10485760 # 10MB, unit: byte
-  keep_original_name: false # Keep original file name, if false, the server will generate a random file name
-  create_date_dir: true # Create date directory, such as /upload/2021/01/01
-  allow_types: # Allowed file types, if empty, all types are allowed
-    - image/jpeg
-    - image/jpg
-    - image/png
-    - image/gif
-    - image/bmp
-jwt: # JWT settings
-  access_secret: qhkxjrRmYcVYKSEobqsvhxhtPVeTWquu # Access token secret
-  refresh_secret: qhkxjrRmYcVYKSEobqsvhxhtPV3TWquu # Refresh token secret
-  access_token_expiration: 60 # minutes
-  refresh_token_expiration: 720 # minutes
-  access_token_cookie_name: go-gin-access # Access token cookie name
-  refresh_token_cookie_name: go-gin-refresh # Refresh token cookie name
-location: Asia/Chongqing # Timezone
-notifications: # Notification settings
-  - type: apprise # You must install apprise first, more details: https://github.com/caronc/apprise
-    instances:
-      - url: "apprise-url-1"
-      - url: "apprise-url-2"
-  - type: dingtalk
-    instances:
-      - webhook: "dingtalk-webhook-1"
-      - webhook: "dingtalk-webhook-2"
-  - type: ifttt
-    instances:
-      - key: "ifttt-key-1"
-        event: "event-1"
-      - key: "ifttt-key-2"
-        event: "event-2"
-  - type: smtp
-    instances:
-      - host: "smtp-host-1"
-        port: 587
-        username: "user-1"
-        password: "password-1"
-        from: "from-1"
-        to: "to-1"
-      - host: "smtp-host-2"
-        port: 587
-        username: "user-2"
-        password: "password-2"
-        from: "from-2"
-        to: "to-2"
-  - type: telegram
-    instances:
-      - botToken: "telegram-bot-token-1"
-        chatID: "chat-id-1"
-      - botToken: "telegram-bot-token-2"
-        chatID: "chat-id-2"
-  - type: wecom
-    instances:
-      - key: "wecom-key-1"
-      - key: "wecom-key-2"
-```
+Service configuration via `yaml` format. The configuration file is located in the root directory of the project and is named `config.example.yaml`. You can copy this file to `config.yaml` and update the values. More details can be found in the [config.example.yaml](https://github.com/funnyzak/go-gin/blob/main/config.example.yaml) file.
 
 ## Build
 

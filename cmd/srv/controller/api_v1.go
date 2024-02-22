@@ -46,7 +46,7 @@ func (v *apiV1) serve() {
 var authModel = model.Auth{}
 
 func (v *apiV1) upload(c *gin.Context) {
-	attachment, err := gogin.AttachmentUpload(c)
+	attachment, err := gogin.AttachmentUpload(c, c.Query("sub_dir"))
 	if err != nil {
 		mygin.ResponseJSON(c, 400, gin.H{}, err.Error())
 		return
