@@ -16,6 +16,7 @@ import (
 	"go-gin/internal/gconfig"
 	"go-gin/model"
 	"go-gin/pkg/logger"
+	"go-gin/pkg/utils"
 	"go-gin/pkg/utils/conf"
 	"go-gin/pkg/utils/file"
 )
@@ -50,7 +51,15 @@ func InitTimezoneAndCache() {
 func InitConfig(name string) {
 	ViperConf, err := conf.ReadViperConfig(name, "yaml", []string{".", "./config", "../"})
 	if err != nil {
-		panic(fmt.Errorf("unable to read config: %s", err))
+		fmt.Println(utils.Colorize(utils.ColorRed, err.Error()))
+
+		gconfig.CreateDefaultConfigFile(name + ".yaml")
+		fmt.Printf("Successfully created default config file at %s\n", utils.Colorize(utils.ColorGreen, name+".yaml"))
+
+		ViperConf, err = conf.ReadViperConfig(name, "yaml", []string{".", "./config", "../"})
+		if err != nil {
+			panic(fmt.Errorf("unable to read config: %s", err))
+		}
 	}
 
 	if err := ViperConf.Unmarshal(&Conf); err != nil {
