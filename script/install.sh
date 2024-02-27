@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #========================================================
-#   System Required: Debian 8+ / Ubuntu 16.04+ / Centos 7+ /
+#   System Required: Debian 8+ / Ubuntu 16.04+ / Centos 7+ / Alpine 3+
 #   Description: GO-GIN script
 #   Github: https://github.com/funnyzak/go-gin
 #========================================================
@@ -61,6 +61,18 @@ check_system_requirements() {
   fi
 }
 
+install_base() {
+  (command -v git >/dev/null 2>&1 && command -v curl >/dev/null 2>&1 && command -v wget >/dev/null 2>&1 && command -v unzip >/dev/null 2>&1 && command -v getenforce >/dev/null 2>&1) ||
+    (install_deps curl wget git unzip)
+}
+
+install_deps() {
+  (command -v yum >/dev/null 2>&1 && yum makecache && yum install $* selinux-policy -y) ||
+    (command -v apt >/dev/null 2>&1 && apt update && apt install $* selinux-utils -y) ||
+    (command -v apt-get >/dev/null 2>&1 && apt-get update && apt-get install $* selinux-utils -y) ||
+    (command -v apk >/dev/null 2>&1 && apk update && apk add $* -f)
+}
+
 ping_check() {
   ping -c 1 github.com >/dev/null 2>&1
   handle_error $? "ping github.com failed. Please check your network."
@@ -106,6 +118,7 @@ execute_funcs() {
 
 install_service() {
   echo -e "Install ${green}${GG_SERVICE_NAME}${plain} service..."
+
   if service_exists; then
     echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service is already installed."
     if [[ $# == 0 ]]; then
@@ -114,8 +127,8 @@ install_service() {
       return 1
     fi
   fi
-
-  execute_funcs "get_service_latest_version" "download_service_app" "download_service_template" "download_service_config" "enable_service 0" "start_service 0"
+  # TODO: apline install
+  execute_funcs "install_base" "get_service_latest_version" "download_service_app" "download_service_template" "download_service_config" "enable_service 0" "start_service 0"
   if [ $? -ne 0 ]; then
     echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service install failed."
     if [[ $# == 0 ]]; then
@@ -156,19 +169,21 @@ get_service_log_path() {
 }
 
 service_exists() {
-  if systemctl --all --type=service | grep -Fq "${GG_SERVICE_NAME}.service"; then
-    return 0
+  if [ "$os_alpine" == 1 ]; then
+    rc-update show | grep -Fq "${GG_SERVICE_NAME}"
   else
-    return 1
+    systemctl --all --type=service | grep -qF "${GG_SERVICE_NAME}.service"
   fi
+  return $?
 }
 
 service_active() {
-  if systemctl is-active --quiet ${GG_SERVICE_NAME}; then
-    return 0
+  if [ "$os_alpine" == 1 ]; then
+    rc-status --servicelist | grep -Fq "${GG_SERVICE_NAME}"
   else
-    return 1
+    systemctl is-active --quiet ${GG_SERVICE_NAME}
   fi
+  return $?
 }
 
 handle_service_action() {
@@ -177,7 +192,11 @@ handle_service_action() {
 
   echo -e "${action} ${green}${GG_SERVICE_NAME}${plain} service..."
 
-  systemctl ${action} ${GG_SERVICE_NAME}
+  if [ "$os_alpine" == 1 ]; then
+    rc-service ${GG_SERVICE_NAME} ${action}
+  else
+    systemctl ${action} ${GG_SERVICE_NAME}
+  fi
 
   if [[ $? -ne 0 ]]; then
     echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} ${action} failed."
@@ -203,7 +222,7 @@ create_service_workdir() {
 
 enable_service() {
   echo -e "Enable ${green}${GG_SERVICE_NAME}${plain} service..."
-  systemctl enable ${GG_SERVICE_NAME}
+  handle_service_action enable 0
   if [ $? -ne 0 ]; then
     echo -e "${red}ERROR${plain}: Enable ${GG_SERVICE_NAME} service failed."
     if [[ $# == 0 ]]; then
@@ -242,7 +261,7 @@ upgrade_service() {
   echo -e "Upgrade ${green}${GG_SERVICE_NAME}${plain} service..."
 
   if service_exists; then
-    execute_funcs "get_service_latest_version" "download_service_app" "handle_service_action restart"
+    execute_funcs "install_base" "get_service_latest_version" "download_service_app" "handle_service_action restart"
     if [ $? -ne 0 ]; then
       echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service upgrade failed."
       if [[ $# == 0 ]]; then
@@ -271,13 +290,16 @@ uninstall_service() {
 
   if service_exists; then
     execute_funcs "stop_service 0" "disable_service 0"
-    systemctl daemon-reload
     rm -f ${GG_SYSTEMD_PATH}
     rm -f ${GG_SERVICE_PATH}
     rm -f ${GG_CONFIG_PATH}
     rm -rf ${GG_WORK_PATH}
-    systemctl daemon-reload
-    systemctl reset-failed
+    if [ "$os_alpine" == 1 ]; then
+      rc-update del ${GG_SERVICE_NAME}
+    else
+      systemctl daemon-reload
+      systemctl reset-failed
+    fi
     echo -e "${green}${GG_SERVICE_NAME}${plain} service uninstall success. Goodbye!"
   else
     echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service uninstall failed. Please check ${GG_SERVICE_NAME} service is installed."
@@ -419,6 +441,8 @@ download_file() {
 
 update_script() {
   echo -e "Updating script..."
+
+  install_base
 
   curl -sL ${SCRIPT_DOWNLINK} -o /tmp/${GG_SERVICE_NAME}.sh
   new_version=$(cat /tmp/${GG_SERVICE_NAME}.sh | grep "SCRIPT_VERSION" | head -n 1 | awk -F "=" '{print $2}' | sed 's/\"//g;s/,//g;s/ //g')
