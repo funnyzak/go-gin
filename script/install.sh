@@ -307,14 +307,9 @@ uninstall_service() {
   echo -e "Uninstall ${green}${GG_SERVICE_NAME}${plain} service..."
 
   if service_installed; then
-    execute_funcs "stop_service 0" "disable_service 0"
-    rm -f ${GG_SYSTEMD_PATH}
-    rm -f ${GG_SERVICE_PATH}
-    rm -f ${GG_CONFIG_PATH}
+    execute_funcs "stop_service 0" "disable_service 0" "systemctl daemon-reload" "systemctl reset-failed"
+    rm -f ${GG_SYSTEMD_PATH} ${GG_CONFIG_PATH} ${GG_SERVICE_PATH}
     rm -rf ${GG_WORK_PATH}
-
-    systemctl daemon-reload
-    systemctl reset-failed
 
     echo -e "${green}${GG_SERVICE_NAME}${plain} service uninstall success. Goodbye!"
   else
