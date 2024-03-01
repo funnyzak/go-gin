@@ -116,6 +116,24 @@ execute_funcs() {
   done
 }
 
+download_service_app() {
+  create_service_workdir
+  download_file "${GG_LATEST_VERSION_DOWNLOAD_URL}" "/tmp/${GG_LATEST_VERSION_ZIP_NAME}" && download_file "${GG_SYSTEMD_TEMPLATE_URL}" "${GG_SYSTEMD_PATH}"
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
+  if [ -f "${GG_SERVICE_PATH}" ]; then
+    rm -f ${GG_SERVICE_PATH}
+  fi
+  echo -e "Unzip ${GG_LATEST_VERSION_ZIP_NAME} to ${GG_WORK_PATH}..."
+  unzip -qo /tmp/${GG_LATEST_VERSION_ZIP_NAME} -d ${GG_WORK_PATH} >/dev/null 2>&1 && rm -f /tmp/${GG_LATEST_VERSION_ZIP_NAME}
+  if [ $? -ne 0 ]; then
+    echo -e "${red}ERROR${plain}: Unzip ${GG_LATEST_VERSION_ZIP_NAME} failed."
+    return 1
+  fi
+  chmod +x ${GG_SERVICE_PATH}
+}
+
 install_service() {
   echo -e "Install ${green}${GG_SERVICE_NAME}${plain} service..."
 
@@ -127,8 +145,13 @@ install_service() {
       return 1
     fi
   fi
-  # TODO: apline install
-  execute_funcs "install_base" "get_service_latest_version" "download_service_app" "download_service_template" "download_service_config" "enable_service 0" "start_service 0"
+  execute_funcs "install_base" "get_service_latest_version"
+  if [ "$os_alpine" == 1 ]; then
+    # TODO: apline install
+  else
+    execute_funcs "download_service_app" "download_file ${GG_CONFIG_SAMPLE_URL} ${GG_CONFIG_PATH}" "download_file ${GG_SYSTEMD_TEMPLATE_URL} ${GG_SYSTEMD_PATH}" "enable_service 0" "start_service 0"
+  fi
+
   if [ $? -ne 0 ]; then
     echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service install failed."
     if [[ $# == 0 ]]; then
@@ -217,6 +240,7 @@ handle_service_action() {
 create_service_workdir() {
   if [ ! -d "${GG_WORK_PATH}" ]; then
     mkdir -p ${GG_WORK_PATH}
+    chmod 777 -R ${GG_WORK_PATH}
   fi
 }
 
@@ -378,40 +402,6 @@ edit_service_config() {
   if [[ $# == 0 ]]; then
     before_show_menu
   fi
-}
-
-download_service_config() {
-  create_service_workdir
-  download_file "${GG_CONFIG_SAMPLE_URL}" "${GG_CONFIG_PATH}"
-  if [ $? -ne 0 ]; then
-    return 1
-  fi
-}
-
-download_service_template() {
-  create_service_workdir
-  download_file "${GG_SYSTEMD_TEMPLATE_URL}" "${GG_SYSTEMD_PATH}"
-  if [ $? -ne 0 ]; then
-    return 1
-  fi
-}
-
-download_service_app() {
-  create_service_workdir
-  download_file "${GG_LATEST_VERSION_DOWNLOAD_URL}" "/tmp/${GG_LATEST_VERSION_ZIP_NAME}"
-  if [ $? -ne 0 ]; then
-    return 1
-  fi
-  if [ -f "${GG_SERVICE_PATH}" ]; then
-    rm -f ${GG_SERVICE_PATH}
-  fi
-  echo -e "Unzip ${GG_LATEST_VERSION_ZIP_NAME} to ${GG_WORK_PATH}..."
-  unzip -o /tmp/${GG_LATEST_VERSION_ZIP_NAME} -d ${GG_WORK_PATH} >/dev/null 2>&1
-  if [ $? -ne 0 ]; then
-    echo -e "${red}ERROR${plain}: Unzip ${GG_LATEST_VERSION_ZIP_NAME} failed."
-    return 1
-  fi
-  chmod +x ${GG_SERVICE_PATH}
 }
 
 get_service_latest_version() {
