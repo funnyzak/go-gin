@@ -13,8 +13,8 @@ green='\033[0;32m'
 yellow='\033[0;33m'
 plain='\033[0m'
 
-SCRIPT_VERSION="0.0.3"                                                      # script version
-SCRIPT_NAME="GO-GIN Script"                                                 # script name
+SCRIPT_VERSION="0.0.3"                                            # script version
+SCRIPT_NAME="GO-GIN Script"                                       # script name
 GG_DESCRIPTION="a web service based on Golang and Gin framework." # service description
 
 GG_NAME="go-gin"                   # service name
@@ -145,7 +145,7 @@ install_service() {
       return 1
     fi
   fi
-  execute_funcs "install_base" "get_service_latest_version" "download_service_bin" "download_file ${GG_SYSTEMD_TEMPLATE_URL} ${GG_SYSTEMD_PATH}" "download_file ${GG_CONFIG_SAMPLE_URL} ${GG_CONFIG_PATH}" "edit_service_config 0"
+  execute_funcs "install_base" "get_service_latest_version" "download_service_bin" "download_file ${GG_SYSTEMD_TEMPLATE_URL} ${GG_SYSTEMD_PATH}" "download_file ${GG_CONFIG_SAMPLE_URL} ${GG_CONFIG_PATH}" "systemctl daemon-reload" "enable_service 0" "start_service 0"
 
   if [ $? -ne 0 ]; then
     echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service install failed."
