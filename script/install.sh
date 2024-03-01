@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #========================================================
-#   System Required: Debian 8+ / Ubuntu 16.04+ / Centos 7+ / Alpine 3+
+#   System Required: Debian 8+ / Ubuntu 16.04+ / Centos 7+
 #   Description: GO-GIN script
 #   Github: https://github.com/funnyzak/go-gin
 #========================================================
@@ -13,9 +13,9 @@ green='\033[0;32m'
 yellow='\033[0;33m'
 plain='\033[0m'
 
-SCRIPT_VERSION="0.0.2"                                                      # script version
+SCRIPT_VERSION="0.0.3"                                                      # script version
 SCRIPT_NAME="GO-GIN Script"                                                 # script name
-GG_DESCRIPTION="Go-Gin is a web service based on Golang and Gin framework." # service description
+GG_DESCRIPTION="a web service based on Golang and Gin framework." # service description
 
 GG_NAME="go-gin"                   # service name
 GG_REPO_NAME="funnyzak/${GG_NAME}" # service repo name
@@ -62,8 +62,8 @@ check_system_requirements() {
 }
 
 install_base() {
-  (command -v git >/dev/null 2>&1 && command -v curl >/dev/null 2>&1 && command -v wget >/dev/null 2>&1 && command -v unzip >/dev/null 2>&1 && command -v getenforce >/dev/null 2>&1) ||
-    (install_deps curl wget git unzip)
+  (command -v git >/dev/null 2>&1 && command -v curl >/dev/null 2>&1 && command -v wget >/dev/null 2>&1 && command -v unzip >/dev/null 2>&1 && command -v vim >/dev/null 2>&1) ||
+    (install_deps curl wget git unzip vim)
 }
 
 install_deps() {
@@ -73,16 +73,16 @@ install_deps() {
     (command -v apk >/dev/null 2>&1 && apk update && apk add $* -f)
 }
 
-ping_check() {
-  ping -c 1 github.com >/dev/null 2>&1
-  handle_error $? "ping github.com failed. Please check your network."
-}
-
 handle_error() {
   if [[ $1 -ne 0 ]]; then
     echo -e "${red}ERROR${plain}: $2"
     exit 1
   fi
+}
+
+ping_check() {
+  ping -c 1 github.com >/dev/null 2>&1
+  handle_error $? "ping github.com failed. Please check your network."
 }
 
 confirm() {
@@ -116,9 +116,9 @@ execute_funcs() {
   done
 }
 
-download_service_app() {
+download_service_bin() {
   create_service_workdir
-  download_file "${GG_LATEST_VERSION_DOWNLOAD_URL}" "/tmp/${GG_LATEST_VERSION_ZIP_NAME}" && download_file "${GG_SYSTEMD_TEMPLATE_URL}" "${GG_SYSTEMD_PATH}"
+  download_file "${GG_LATEST_VERSION_DOWNLOAD_URL}" "/tmp/${GG_LATEST_VERSION_ZIP_NAME}"
   if [ $? -ne 0 ]; then
     return 1
   fi
@@ -137,7 +137,7 @@ download_service_app() {
 install_service() {
   echo -e "Install ${green}${GG_SERVICE_NAME}${plain} service..."
 
-  if service_exists; then
+  if service_installed; then
     echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service is already installed."
     if [[ $# == 0 ]]; then
       before_show_menu
@@ -145,12 +145,7 @@ install_service() {
       return 1
     fi
   fi
-  execute_funcs "install_base" "get_service_latest_version"
-  if [ "$os_alpine" == 1 ]; then
-    # TODO: apline install
-  else
-    execute_funcs "download_service_app" "download_file ${GG_CONFIG_SAMPLE_URL} ${GG_CONFIG_PATH}" "download_file ${GG_SYSTEMD_TEMPLATE_URL} ${GG_SYSTEMD_PATH}" "enable_service 0" "start_service 0"
-  fi
+  execute_funcs "install_base" "get_service_latest_version" "download_service_bin" "download_file ${GG_SYSTEMD_TEMPLATE_URL} ${GG_SYSTEMD_PATH}" "download_file ${GG_CONFIG_SAMPLE_URL} ${GG_CONFIG_PATH}" "edit_service_config 0"
 
   if [ $? -ne 0 ]; then
     echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service install failed."
@@ -162,6 +157,31 @@ install_service() {
   fi
 
   echo -e "${green}${GG_SERVICE_NAME}${plain} service for ${system_architecture} install success. the latest version is ${GG_LATEST_VERSION}. Enjoy it!"
+
+  if [[ $# == 0 ]]; then
+    before_show_menu
+  fi
+}
+
+edit_service_config() {
+  echo -e "Edit ${green}${GG_SERVICE_NAME}${plain} service config..."
+
+  if [ ! -f "${GG_CONFIG_PATH}" ]; then
+    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} config file not found."
+    if [[ $# == 0 ]]; then
+      before_show_menu
+    else
+      return 1
+    fi
+  fi
+
+  vim ${GG_CONFIG_PATH}
+
+  systemctl daemon-reload
+  systemctl enable ${GG_SERVICE_NAME}
+  systemctl restart ${GG_SERVICE_NAME}
+
+  echo -e "${green}${GG_SERVICE_NAME}${plain} service config edit success and already restart."
 
   if [[ $# == 0 ]]; then
     before_show_menu
@@ -188,24 +208,15 @@ get_service_log_path() {
   else
     echo ""
   fi
-
 }
 
-service_exists() {
-  if [ "$os_alpine" == 1 ]; then
-    rc-update show | grep -Fq "${GG_SERVICE_NAME}"
-  else
-    systemctl --all --type=service | grep -qF "${GG_SERVICE_NAME}.service"
-  fi
+service_installed() {
+  systemctl --all --type=service | grep -qF "${GG_SERVICE_NAME}.service"
   return $?
 }
 
-service_active() {
-  if [ "$os_alpine" == 1 ]; then
-    rc-status --servicelist | grep -Fq "${GG_SERVICE_NAME}"
-  else
-    systemctl is-active --quiet ${GG_SERVICE_NAME}
-  fi
+service_actived() {
+  systemctl is-active --quiet ${GG_SERVICE_NAME}
   return $?
 }
 
@@ -215,11 +226,7 @@ handle_service_action() {
 
   echo -e "${action} ${green}${GG_SERVICE_NAME}${plain} service..."
 
-  if [ "$os_alpine" == 1 ]; then
-    rc-service ${GG_SERVICE_NAME} ${action}
-  else
-    systemctl ${action} ${GG_SERVICE_NAME}
-  fi
+  systemctl ${action} ${GG_SERVICE_NAME}
 
   if [[ $? -ne 0 ]]; then
     echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} ${action} failed."
@@ -245,20 +252,7 @@ create_service_workdir() {
 }
 
 enable_service() {
-  echo -e "Enable ${green}${GG_SERVICE_NAME}${plain} service..."
-  handle_service_action enable 0
-  if [ $? -ne 0 ]; then
-    echo -e "${red}ERROR${plain}: Enable ${GG_SERVICE_NAME} service failed."
-    if [[ $# == 0 ]]; then
-      before_show_menu
-    else
-      return 1
-    fi
-  fi
-  echo -e "${green}${GG_SERVICE_NAME}${plain} service enable success."
-  if [[ $# == 0 ]]; then
-    before_show_menu
-  fi
+  handle_service_action enable $1
 }
 
 start_service() {
@@ -284,8 +278,8 @@ show_service_status() {
 upgrade_service() {
   echo -e "Upgrade ${green}${GG_SERVICE_NAME}${plain} service..."
 
-  if service_exists; then
-    execute_funcs "install_base" "get_service_latest_version" "download_service_app" "handle_service_action restart"
+  if service_installed; then
+    execute_funcs "install_base" "get_service_latest_version" "download_service_bin" "systemctl daemon-reload" "handle_service_action restart 0"
     if [ $? -ne 0 ]; then
       echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service upgrade failed."
       if [[ $# == 0 ]]; then
@@ -312,18 +306,16 @@ upgrade_service() {
 uninstall_service() {
   echo -e "Uninstall ${green}${GG_SERVICE_NAME}${plain} service..."
 
-  if service_exists; then
+  if service_installed; then
     execute_funcs "stop_service 0" "disable_service 0"
     rm -f ${GG_SYSTEMD_PATH}
     rm -f ${GG_SERVICE_PATH}
     rm -f ${GG_CONFIG_PATH}
     rm -rf ${GG_WORK_PATH}
-    if [ "$os_alpine" == 1 ]; then
-      rc-update del ${GG_SERVICE_NAME}
-    else
-      systemctl daemon-reload
-      systemctl reset-failed
-    fi
+
+    systemctl daemon-reload
+    systemctl reset-failed
+
     echo -e "${green}${GG_SERVICE_NAME}${plain} service uninstall success. Goodbye!"
   else
     echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service uninstall failed. Please check ${GG_SERVICE_NAME} service is installed."
@@ -342,7 +334,7 @@ uninstall_service() {
 show_service_log() {
   echo -e "Show ${green}${GG_SERVICE_NAME}${plain} service log..."
 
-  if ! service_exists || [ -z "$(get_service_log_path)" ] || [ ! -f "$(get_service_log_path)" ]; then
+  if ! service_installed || [ -z "$(get_service_log_path)" ] || [ ! -f "$(get_service_log_path)" ]; then
     echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service log not found."
     if [[ $# == 0 ]]; then
       before_show_menu
@@ -353,51 +345,6 @@ show_service_log() {
 
   echo -e "Press ${red}Ctrl+C${plain} to exit."
   watch -n 1 tail -n 20 "$(get_service_log_path)"
-
-  if [[ $# == 0 ]]; then
-    before_show_menu
-  fi
-}
-
-edit_service_config() {
-  echo -e "Edit ${green}${GG_SERVICE_NAME}${plain} service config..."
-
-  if ! service_exists; then
-    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} service not installed. Please install it first."
-    if [[ $# == 0 ]]; then
-      before_show_menu
-    else
-      return 1
-    fi
-  fi
-
-  if [ ! -f "${GG_CONFIG_PATH}" ]; then
-    echo -e "${red}ERROR${plain}: ${GG_SERVICE_NAME} config file not found."
-    if [[ $# == 0 ]]; then
-      before_show_menu
-    else
-      return 1
-    fi
-  fi
-
-  if command -v vim >/dev/null 2>&1; then
-    vim ${GG_CONFIG_PATH}
-  elif command -v nano >/dev/null 2>&1; then
-    nano ${GG_CONFIG_PATH}
-  elif command -v vi >/dev/null 2>&1; then
-    vi ${GG_CONFIG_PATH}
-  else
-    echo -e "${red}ERROR${plain}: No editor found."
-    if [[ $# == 0 ]]; then
-      before_show_menu
-    else
-      return 1
-    fi
-  fi
-  echo -e "${green}${GG_SERVICE_NAME}${plain} service config edit success."
-  if confirm "Do you want to restart ${GG_SERVICE_NAME} service?"; then
-    execute_funcs "handle_service_action restart"
-  fi
 
   if [[ $# == 0 ]]; then
     before_show_menu
@@ -475,6 +422,7 @@ show_usage() {
 show_menu() {
   echo -e ">
     ${green}${SCRIPT_NAME} ${plain}${red}v${SCRIPT_VERSION}${plain}
+    ${GG_NAME} - ${GG_DESCRIPTION}
     ————————————————
     ${green}1.${plain} Install service
     ${green}2.${plain} Start service
